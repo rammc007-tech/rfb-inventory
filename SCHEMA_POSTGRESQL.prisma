@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ⚠️ IMPORTANT: Change this for Netlify deployment
+// Replace the datasource in your schema.prisma file with this:
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Rest of your schema remains the same...
+
+model RawMaterial {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  unit          String   // kg, g, liter, ml, pieces
+  isEssential   Boolean  @default(false) // Mark as essential item
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  purchaseBatches PurchaseBatch[]
+  recipeIngredients RecipeIngredient[]
+  
+  @@map("raw_materials")
+}
+
+model PurchaseBatch {
+  id            String      @id @default(cuid())
+  rawMaterialId String
+  quantity      Float
+  unit          String      // kg, g, liter, ml, pieces
+  unitPrice     Float       // Price per unit
+  totalCost     Float       // quantity * unitPrice
+  purchaseDate  DateTime    @default(now())
+  remainingQty  Float       @default(0) // Track remaining quantity after FIFO deductions
+  gasCylinderQty Float?     // Separate column for gas cylinder quantity (for Cylinder material)
+  
+  rawMaterial   RawMaterial @relation(fields: [rawMaterialId], references: [id], onDelete: Restrict)
+  
+  @@index([rawMaterialId, purchaseDate])
+  @@map("purchase_batches")
+}
+
+model Recipe {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  outputQty     Float
+  outputUnit    String   // kg, liter, pieces
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  ingredients   RecipeIngredient[]
+  productionLogs ProductionLog[]
+  
+  @@map("recipes")
+}
+
+model RecipeIngredient {
+  id            String      @id @default(cuid())
+  recipeId      String
+  rawMaterialId String
+  quantity      Float
+  unit          String      // kg, g, liter, ml, pieces
+  
+  recipe        Recipe      @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  rawMaterial   RawMaterial @relation(fields: [rawMaterialId], references: [id])
+  
+  @@index([recipeId])
+  @@map("recipe_ingredients")
+}
+
+model ProductionLog {
+  id                String   @id @default(cuid())
+  recipeId          String
+  batches           Int      // Number of batches produced
+  totalCost         Float    // Total production cost
+  costPerUnit       Float    // Cost per kg/liter/piece
+  productionDate    DateTime @default(now())
+  variantName       String?  // Name of variation (e.g., "Egg Puff", "Chicken Puff")
+  baseRecipeCost    Float?   // Cost of base recipe
+  additionalCost    Float?   // Cost of additional ingredients for variant
+  utilityCost       Float?   @default(0) // Utility cost (electricity, gas, etc.)
+  staffSalary       Float?   @default(0) // Staff salary for production
+  
+  recipe            Recipe   @relation(fields: [recipeId], references: [id])
+  costBreakdown     String   @default("{}") // JSON string storing cost breakdown per ingredient
+  variantIngredients String  @default("{}") // JSON string for additional ingredients in variant
+  
+  @@index([recipeId, productionDate])
+  @@map("production_logs")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  username      String   @unique
+  password      String   // Hashed password
+  role          String   @default("user") // admin, user
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("users")
+}
+
+model ShopSettings {
+  id            String   @id @default(cuid())
+  shopName      String   @default("RISHA FOODS AND BAKERY")
+  shopAddress   String   @default("Server No: 103/1A2, Agaramel, Poonamallee Taluk, Chennai - 600123")
+  shopEmail     String   @default("rishafoodsandbakery@gmail.com")
+  shopPhone     String   @default("")
+  currency      String   @default("₹")
+  taxRate       Float    @default(0)
+  printTextSize String   @default("medium") // small, medium, large
+  updatedAt     DateTime @updatedAt
+  
+  @@map("shop_settings")
+}
+

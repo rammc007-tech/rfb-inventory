@@ -1,0 +1,209 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@media print {
+  /* Hide all non-print elements */
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Reset body for print */
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Hide sidebar, navigation, headers */
+  header,
+  nav,
+  aside,
+  .sidebar,
+  [class*="sidebar"],
+  [class*="Sidebar"] {
+    display: none !important;
+  }
+  
+  /* Hide all forms, inputs, buttons, search bars */
+  input,
+  select,
+  button,
+  form,
+  .search-bar,
+  [class*="search"],
+  [class*="filter"],
+  [class*="Search"],
+  [class*="Filter"] {
+    display: none !important;
+  }
+  
+  /* Hide empty spaces and containers */
+  .space-y-6 > *:empty,
+  .space-y-4 > *:empty,
+  div:empty,
+  .gap-4:empty,
+  .gap-2:empty {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Remove all shadows */
+  .shadow,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-sm {
+    box-shadow: none !important;
+  }
+  
+  /* White background only */
+  .bg-white,
+  .bg-gray-50,
+  .bg-gray-100,
+  .bg-blue-50 {
+    background-color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Remove borders except table */
+  .border,
+  .border-gray-200,
+  .border-gray-300,
+  .border-b,
+  .border-b-2 {
+    border: none !important;
+  }
+  
+  /* Table styling for print */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  th, td {
+    border: 1px solid #000 !important;
+    padding: 6px 8px !important;
+  }
+  
+  thead {
+    background-color: #f3f4f6 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Shop name header - only show shop name, no other text */
+  [class*="print:block"] {
+    text-align: center !important;
+    margin: 0 0 10px 0 !important;
+    padding: 8px 0 !important;
+    border-bottom: 2px solid #000 !important;
+  }
+  
+  [class*="print:block"] h3 {
+    text-align: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 22px !important;
+    font-weight: bold !important;
+    color: #dc2626 !important;
+    line-height: 1.2 !important;
+  }
+  
+  /* Hide any paragraphs, spans, or other text in print header - ONLY shop name shows */
+  [class*="print:block"] p,
+  [class*="print:block"] span,
+  [class*="print:block"] > *:not(h3) {
+    display: none !important;
+  }
+  
+  /* Ensure no extra spacing around shop name */
+  [class*="print:block"]::before,
+  [class*="print:block"]::after {
+    content: none !important;
+  }
+
+  /* Print text size classes */
+  .print-small {
+    font-size: 10px !important;
+  }
+
+  .print-medium {
+    font-size: 12px !important;
+  }
+
+  .print-large {
+    font-size: 14px !important;
+  }
+  
+  /* Remove all spacing and gaps */
+  .space-y-6,
+  .space-y-4,
+  .space-y-2 {
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+  
+  /* Hide main layout padding and margins */
+  main,
+  .p-4,
+  .p-6,
+  [class*="p-"],
+  [class*="m-"] {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Hide everything except table container */
+  .space-y-6 > *:not(:has(table)):not([class*="print:block"]) {
+    display: none !important;
+  }
+  
+  /* Show only table container with shop name */
+  div:has(table) {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Shop name container - remove all spacing around */
+  [class*="print:block"] {
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
+  }
+}
