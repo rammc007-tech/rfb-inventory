@@ -12,17 +12,20 @@ RISHA FOODS AND BAKERY - Inventory Management System with FIFO Cost Calculation
 - **Automatic Stock Deduction**: Stock automatically deducted from FIFO batches
 - **Unit Conversion**: Automatic conversion between compatible units (kg↔g, L↔ml)
 - **Cost Reporting**: Detailed cost breakdowns and reports
+- **Essential Items**: Separate tracking for essential items
+- **Production Variants**: Support for recipe variations
+- **PWA Support**: Works offline and can be installed
 
 ## Technology Stack
 
 - Next.js 14
 - TypeScript
 - Prisma ORM
-- SQLite Database
+- PostgreSQL Database (for production)
 - Tailwind CSS
 - SWR for data fetching
 
-## Setup Instructions
+## Quick Start
 
 1. **Install Dependencies**:
    ```bash
@@ -41,7 +44,18 @@ RISHA FOODS AND BAKERY - Inventory Management System with FIFO Cost Calculation
    ```
 
 4. **Open in Browser**:
-   Navigate to `http://localhost:3000`
+   Navigate to `http://localhost:3001`
+
+## Deployment
+
+See `DEPLOY_NOW.md` for detailed deployment instructions to Netlify.
+
+## Default Login
+
+- Username: `admin`
+- Password: `admin123`
+
+**⚠️ Change default password after first login!**
 
 ## Database Schema
 
@@ -50,6 +64,8 @@ RISHA FOODS AND BAKERY - Inventory Management System with FIFO Cost Calculation
 - **Recipe**: Recipe definitions
 - **RecipeIngredient**: Recipe ingredients with quantities
 - **ProductionLog**: Production logs with cost calculations
+- **User**: User accounts
+- **ShopSettings**: Shop settings and preferences
 
 ## Key Features Explained
 
@@ -90,4 +106,3 @@ Automatic conversion between:
 - Cost calculations are always based on FIFO
 - Production confirms stock deduction only after user confirmation
 - All costs are tracked and displayed in reports
-
