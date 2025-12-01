@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
@@ -15,7 +15,18 @@ import {
   Calculator,
   Star,
   Settings,
+  Trash2,
+  LogIn,
+  LogOut,
+  Maximize,
+  Minimize,
+  User,
 } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
+import ShopLogo from '@/components/ShopLogo'
+import useSWR from 'swr'
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -30,13 +41,61 @@ const menuItems = [
   { href: '/cost-calculator', icon: Calculator, label: 'Cost Calculator' },
   { href: '/production', icon: Factory, label: 'Production' },
   { href: '/reports', icon: FileText, label: 'Cost Reports' },
+  { href: '/deleted-items', icon: Trash2, label: 'Deleted Items' },
   { href: '/settings', icon: Settings, label: 'Settings' },
 ]
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [currentUser, setCurrentUser] = useState<any>(null)
   const pathname = usePathname()
   const router = useRouter()
+  const { user, logout, isAuthenticated } = useAuth()
+  const { data: shopSettings } = useSWR('/api/settings', fetcher)
+
+  useEffect(() => {
+    // Get user from localStorage
+    if (typeof window !== 'undefined') {
+      const userStr = localStorage.getItem('rfb_user')
+      if (userStr) {
+        setCurrentUser(JSON.parse(userStr))
+      }
+    }
+  }, [user])
+
+  const handleLogout = () => {
+    if (confirm('Are you sure you want to logout?')) {
+      logout()
+      router.push('/')
+    }
+  }
+
+  const handleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => {
+        setIsFullscreen(true)
+      }).catch((err) => {
+        console.error('Error attempting to enable fullscreen:', err)
+      })
+    } else {
+      document.exitFullscreen().then(() => {
+        setIsFullscreen(false)
+      }).catch((err) => {
+        console.error('Error attempting to exit fullscreen:', err)
+      })
+    }
+  }
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement)
+    }
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange)
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -49,7 +108,46 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           >
             {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-          <h1 className="text-xl font-bold text-primary-600">RFB</h1>
+          <ShopLogo size="small" showText={false} />
+          <div className="flex items-center gap-2">
+            {currentUser && (
+              <div className="flex items-center gap-2 px-2 py-1 bg-blue-50 rounded-lg">
+                <User size={16} className="text-blue-600" />
+                <span className="text-xs font-medium text-blue-800">{currentUser.username}</span>
+                <span className={`text-xs px-1.5 py-0.5 rounded ${
+                  currentUser.role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                  currentUser.role === 'supervisor' ? 'bg-orange-100 text-orange-800' :
+                  'bg-green-100 text-green-800'
+                }`}>
+                  {currentUser.role}
+                </span>
+              </div>
+            )}
+            <button
+              onClick={handleFullscreen}
+              className="p-2 rounded-lg hover:bg-gray-100"
+              title="Toggle Fullscreen"
+            >
+              {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+            </button>
+            {isAuthenticated ? (
+              <button
+                onClick={handleLogout}
+                className="p-2 rounded-lg hover:bg-red-100 text-red-600"
+                title="Logout"
+              >
+                <LogOut size={20} />
+              </button>
+            ) : (
+              <Link
+                href="/"
+                className="p-2 rounded-lg hover:bg-blue-100 text-blue-600"
+                title="Login"
+              >
+                <LogIn size={20} />
+              </Link>
+            )}
+          </div>
         </div>
       </div>
 
@@ -67,10 +165,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         >
           <div className="h-full flex flex-col">
             <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold" style={{ color: '#dc2626' }}>
-                RISHA FOODS AND BAKERY
-              </h2>
-              <p className="text-xs text-gray-500 mt-1">Inventory Management</p>
+              <ShopLogo 
+                size="small" 
+                showText={true} 
+                shopName={shopSettings?.shopName}
+                logoUrl={shopSettings?.logoUrl}
+              />
+              <p className="text-xs text-gray-500 mt-2 text-center">Inventory Management</p>
             </div>
 
             <nav className="flex-1 overflow-y-auto p-4 relative z-10">
@@ -122,6 +223,47 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 {menuItems.find((item) => item.href === pathname)?.label ||
                   'Dashboard'}
               </h1>
+              <div className="flex items-center gap-3">
+                {currentUser && (
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-lg border border-blue-200">
+                    <User size={18} className="text-blue-600" />
+                    <span className="text-sm font-medium text-blue-800">{currentUser.username}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded font-semibold ${
+                      currentUser.role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                      currentUser.role === 'supervisor' ? 'bg-orange-100 text-orange-800' :
+                      'bg-green-100 text-green-800'
+                    }`}>
+                      {currentUser.role}
+                    </span>
+                  </div>
+                )}
+                <button
+                  onClick={handleFullscreen}
+                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  title="Toggle Fullscreen"
+                >
+                  {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+                </button>
+                {isAuthenticated ? (
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-100 text-red-600 transition-colors"
+                    title="Logout"
+                  >
+                    <LogOut size={18} />
+                    <span className="text-sm font-medium">Logout</span>
+                  </button>
+                ) : (
+                  <Link
+                    href="/"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 text-blue-600 transition-colors"
+                    title="Login"
+                  >
+                    <LogIn size={18} />
+                    <span className="text-sm font-medium">Login</span>
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
 

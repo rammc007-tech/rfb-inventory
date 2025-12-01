@@ -1,21 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma, reloadDatabase } from '@/lib/prisma'
 
-// PUT update raw material (for marking as essential)
+// PUT update raw material
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const body = await request.json()
-    const { isEssential } = body
+    const { name, unit, isEssential } = body
 
-    const material = await prisma.rawMaterial.update({
+    const updateData: any = {}
+    if (name !== undefined) updateData.name = name.trim()
+    if (unit !== undefined) updateData.unit = unit
+    if (isEssential !== undefined) updateData.isEssential = isEssential
+
+    const material = prisma.rawMaterial.update({
       where: { id: params.id },
-      data: {
-        isEssential: isEssential !== undefined ? isEssential : undefined,
-      },
+      data: updateData,
     })
+
+    if (!material) {
+      return NextResponse.json(
+        { error: 'Material not found' },
+        { status: 404 }
+      )
+    }
 
     return NextResponse.json({
       id: material.id,
@@ -27,6 +37,69 @@ export async function PUT(
     console.error('Error updating material:', error)
     return NextResponse.json(
       { error: 'Failed to update material' },
+      { status: 500 }
+    )
+  }
+}
+
+// DELETE raw material (move to deleted_items)
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    // Get user role from request header
+    const userRole = (request.headers.get('x-user-role') || 'user') as 'user' | 'supervisor' | 'admin'
+    
+    // Get access control settings
+    const settings = prisma.shopSettings.findFirst()
+    const accessControl = (settings as any)?.accessControl || {}
+    
+    // Check permission for raw_materials_delete
+    const hasPermission = accessControl.raw_materials_delete?.[userRole] ?? (userRole === 'admin')
+    
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: 'Permission denied. You do not have access to delete raw materials.' },
+        { status: 403 }
+      )
+    }
+
+    const material = prisma.rawMaterial.findUnique({
+      where: { id: params.id },
+    })
+
+    if (!material) {
+      return NextResponse.json(
+        { error: 'Material not found' },
+        { status: 404 }
+      )
+    }
+
+    // Move to deleted_items
+    const deletedItem = prisma.deletedItem.create({
+      data: {
+        category: 'raw_material',
+        originalData: material,
+      },
+    })
+    console.log('Raw material moved to deleted_items:', deletedItem.id)
+
+    // Delete from raw_materials
+    prisma.rawMaterial.delete({
+      where: { id: params.id },
+    })
+    
+    // Reload database to ensure consistency
+    if (typeof reloadDatabase === 'function') {
+      reloadDatabase()
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Error deleting material:', error)
+    return NextResponse.json(
+      { error: 'Failed to delete material' },
       { status: 500 }
     )
   }

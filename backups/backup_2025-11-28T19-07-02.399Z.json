@@ -1,0 +1,1674 @@
+{
+  "timestamp": "2025-11-28T19:07:02.399Z",
+  "materials": [
+    {
+      "id": "mii7z8mbbn374rsi40t",
+      "name": "Maida",
+      "unit": "kg",
+      "isEssential": true,
+      "createdAt": "2025-11-28T02:04:44.771Z",
+      "updatedAt": "2025-11-28T02:04:44.772Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mfz3ntbquocy",
+          "rawMaterialId": "mii7z8mbbn374rsi40t",
+          "quantity": 50,
+          "unit": "kg",
+          "unitPrice": 42,
+          "totalCost": 2100,
+          "remainingQty": 44.7,
+          "purchaseDate": "2024-11-15T00:00:00.000Z",
+          "gasCylinderQty": null
+        },
+        {
+          "id": "mii7z8mf226odkxanr3",
+          "rawMaterialId": "mii7z8mbbn374rsi40t",
+          "quantity": 25,
+          "unit": "kg",
+          "unitPrice": 43,
+          "totalCost": 1075,
+          "remainingQty": 25,
+          "purchaseDate": "2024-11-20T00:00:00.000Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mck2j1u0l03c",
+      "name": "Sugar",
+      "unit": "kg",
+      "isEssential": true,
+      "createdAt": "2025-11-28T02:04:44.772Z",
+      "updatedAt": "2025-11-28T02:04:44.772Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mfw9yfogngk0j",
+          "rawMaterialId": "mii7z8mck2j1u0l03c",
+          "quantity": 10,
+          "unit": "kg",
+          "unitPrice": 40,
+          "totalCost": 400,
+          "remainingQty": 7.3999999999999995,
+          "purchaseDate": "2024-11-10T00:00:00.000Z",
+          "gasCylinderQty": null
+        },
+        {
+          "id": "mii7z8mfa5lr53gnhmd",
+          "rawMaterialId": "mii7z8mck2j1u0l03c",
+          "quantity": 5,
+          "unit": "kg",
+          "unitPrice": 41,
+          "totalCost": 205,
+          "remainingQty": 5,
+          "purchaseDate": "2024-11-25T00:00:00.000Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mckghvf1plx9",
+      "name": "Oil",
+      "unit": "liter",
+      "isEssential": true,
+      "createdAt": "2025-11-28T02:04:44.772Z",
+      "updatedAt": "2025-11-28T02:04:44.772Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mf9xphgebax88",
+          "rawMaterialId": "mii7z8mckghvf1plx9",
+          "quantity": 5,
+          "unit": "liter",
+          "unitPrice": 120,
+          "totalCost": 600,
+          "remainingQty": 3.15,
+          "purchaseDate": "2024-11-12T00:00:00.000Z",
+          "gasCylinderQty": null
+        },
+        {
+          "id": "mii7z8mfd600q3qsohb",
+          "rawMaterialId": "mii7z8mckghvf1plx9",
+          "quantity": 3,
+          "unit": "liter",
+          "unitPrice": 125,
+          "totalCost": 375,
+          "remainingQty": 3,
+          "purchaseDate": "2024-11-22T00:00:00.000Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mdmq8llawn76d",
+      "name": "Dalda",
+      "unit": "kg",
+      "isEssential": true,
+      "createdAt": "2025-11-28T02:04:44.773Z",
+      "updatedAt": "2025-11-28T17:56:31.883Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mfydz8rxwfsta",
+          "rawMaterialId": "mii7z8mdmq8llawn76d",
+          "quantity": 4,
+          "unit": "kg",
+          "unitPrice": 200,
+          "totalCost": 800,
+          "remainingQty": 3.1,
+          "purchaseDate": "2024-11-14T00:00:00.000Z",
+          "gasCylinderQty": null
+        },
+        {
+          "id": "mij604otu54e2v8bwvf",
+          "rawMaterialId": "mii7z8mdmq8llawn76d",
+          "quantity": 5,
+          "unit": "kg",
+          "unitPrice": 200,
+          "totalCost": 1000,
+          "remainingQty": 5,
+          "purchaseDate": "2025-11-28T17:57:13.277Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mdlgojs6fsg2h",
+      "name": "Gas Cylinder",
+      "unit": "kg",
+      "isEssential": true,
+      "createdAt": "2025-11-28T02:04:44.773Z",
+      "updatedAt": "2025-11-28T02:04:44.773Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mfkvvaodcbcjq",
+          "rawMaterialId": "mii7z8mdlgojs6fsg2h",
+          "quantity": 19,
+          "unit": "kg",
+          "unitPrice": 110,
+          "totalCost": 2090,
+          "remainingQty": 18.3,
+          "purchaseDate": "2024-11-18T00:00:00.000Z",
+          "gasCylinderQty": 19
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mdbjr0sqfh4jw",
+      "name": "vennila",
+      "unit": "liter",
+      "isEssential": true,
+      "createdAt": "2025-11-28T02:04:44.773Z",
+      "updatedAt": "2025-11-28T02:04:44.773Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mgcsp8nz7mut",
+          "rawMaterialId": "mii7z8mdbjr0sqfh4jw",
+          "quantity": 2,
+          "unit": "liter",
+          "unitPrice": 150,
+          "totalCost": 300,
+          "remainingQty": 1.9,
+          "purchaseDate": "2024-11-16T00:00:00.000Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mdfcl2ns8tzkm",
+      "name": "Egg",
+      "unit": "pieces",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.773Z",
+      "updatedAt": "2025-11-28T02:04:44.773Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mg77aj7nrjj63",
+          "rawMaterialId": "mii7z8mdfcl2ns8tzkm",
+          "quantity": 100,
+          "unit": "pieces",
+          "unitPrice": 8,
+          "totalCost": 800,
+          "remainingQty": 86,
+          "purchaseDate": "2024-11-20T00:00:00.000Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mdaeirc9t2nw",
+      "name": "Milk",
+      "unit": "liter",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.773Z",
+      "updatedAt": "2025-11-28T02:04:44.773Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mgbpsx7i3w3ij",
+          "rawMaterialId": "mii7z8mdaeirc9t2nw",
+          "quantity": 10,
+          "unit": "liter",
+          "unitPrice": 60,
+          "totalCost": 600,
+          "remainingQty": 9.399999999999999,
+          "purchaseDate": "2024-11-21T00:00:00.000Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mddf7907jvrb4",
+      "name": "Yeast",
+      "unit": "g",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.773Z",
+      "updatedAt": "2025-11-28T02:04:44.773Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mg8neg99xwmur",
+          "rawMaterialId": "mii7z8mddf7907jvrb4",
+          "quantity": 500,
+          "unit": "g",
+          "unitPrice": 0.5,
+          "totalCost": 250,
+          "remainingQty": 500,
+          "purchaseDate": "2024-11-19T00:00:00.000Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mduypjrehte1q",
+      "name": "Baking Powder",
+      "unit": "g",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.773Z",
+      "updatedAt": "2025-11-28T02:04:44.773Z",
+      "purchaseBatches": [
+        {
+          "id": "mij74qd8rb9lmxv72r",
+          "rawMaterialId": "mii7z8mduypjrehte1q",
+          "quantity": 2,
+          "unit": "kg",
+          "unitPrice": 225,
+          "totalCost": 450,
+          "remainingQty": 1.73,
+          "purchaseDate": "2025-11-28T18:28:47.612Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mdyh8916343z",
+      "name": "Cocoa Powder",
+      "unit": "kg",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.773Z",
+      "updatedAt": "2025-11-28T02:04:44.773Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mg2tqg7czuk33",
+          "rawMaterialId": "mii7z8mdyh8916343z",
+          "quantity": 2,
+          "unit": "kg",
+          "unitPrice": 350,
+          "totalCost": 700,
+          "remainingQty": 1.7999999999999998,
+          "purchaseDate": "2024-11-17T00:00:00.000Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8meftuf88evl0s",
+      "name": "Chocolate",
+      "unit": "kg",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.774Z",
+      "updatedAt": "2025-11-28T02:04:44.774Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mgoptxlhlpm5",
+          "rawMaterialId": "mii7z8meftuf88evl0s",
+          "quantity": 3,
+          "unit": "kg",
+          "unitPrice": 400,
+          "totalCost": 1200,
+          "remainingQty": 3,
+          "purchaseDate": "2024-11-23T00:00:00.000Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mext0dfi2kew7",
+      "name": "Onion",
+      "unit": "kg",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.774Z",
+      "updatedAt": "2025-11-28T02:04:44.774Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mhs04k3s19kq",
+          "rawMaterialId": "mii7z8mext0dfi2kew7",
+          "quantity": 5,
+          "unit": "kg",
+          "unitPrice": 30,
+          "totalCost": 150,
+          "remainingQty": 4.6,
+          "purchaseDate": "2024-11-24T00:00:00.000Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mep9c48rdb2jf",
+      "name": "Potato",
+      "unit": "kg",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.774Z",
+      "updatedAt": "2025-11-28T02:04:44.774Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mhex6t869rmkl",
+          "rawMaterialId": "mii7z8mep9c48rdb2jf",
+          "quantity": 10,
+          "unit": "kg",
+          "unitPrice": 25,
+          "totalCost": 250,
+          "remainingQty": 9.5,
+          "purchaseDate": "2024-11-24T00:00:00.000Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8melcodd23czjf",
+      "name": "Salt",
+      "unit": "kg",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.774Z",
+      "updatedAt": "2025-11-28T02:04:44.774Z",
+      "purchaseBatches": [
+        {
+          "id": "mii7z8mhlvste5b3c49",
+          "rawMaterialId": "mii7z8melcodd23czjf",
+          "quantity": 5,
+          "unit": "kg",
+          "unitPrice": 20,
+          "totalCost": 100,
+          "remainingQty": 4.9,
+          "purchaseDate": "2024-11-15T00:00:00.000Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mee662z8nkkae",
+      "name": "Chilli Powder",
+      "unit": "kg",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.774Z",
+      "updatedAt": "2025-11-28T02:04:44.774Z",
+      "purchaseBatches": [
+        {
+          "id": "mij66i4rie8aviib31e",
+          "rawMaterialId": "mii7z8mee662z8nkkae",
+          "quantity": 2,
+          "unit": "kg",
+          "unitPrice": 157.5,
+          "totalCost": 315,
+          "remainingQty": 1.98,
+          "purchaseDate": "2025-11-28T18:02:10.636Z",
+          "gasCylinderQty": null
+        }
+      ]
+    },
+    {
+      "id": "mii7z8meptix6133ht",
+      "name": "Turmeric Powder",
+      "unit": "kg",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.774Z",
+      "updatedAt": "2025-11-28T02:04:44.774Z",
+      "purchaseBatches": []
+    },
+    {
+      "id": "mii7z8me8889sg28yu",
+      "name": "Cumin Seeds",
+      "unit": "g",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.774Z",
+      "updatedAt": "2025-11-28T02:04:44.774Z",
+      "purchaseBatches": []
+    },
+    {
+      "id": "mii7z8mebu66x0y9wbr",
+      "name": "Coriander Seeds",
+      "unit": "g",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.774Z",
+      "updatedAt": "2025-11-28T02:04:44.774Z",
+      "purchaseBatches": []
+    },
+    {
+      "id": "mii7z8mecanwp73j8km",
+      "name": "Garam Masala",
+      "unit": "g",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.774Z",
+      "updatedAt": "2025-11-28T02:04:44.774Z",
+      "purchaseBatches": []
+    },
+    {
+      "id": "mii7z8me9pbggok2ez7",
+      "name": "Bread Improver",
+      "unit": "g",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.774Z",
+      "updatedAt": "2025-11-28T02:04:44.774Z",
+      "purchaseBatches": []
+    },
+    {
+      "id": "mii7z8mea3fi3qlabe",
+      "name": "Cream Gel",
+      "unit": "g",
+      "isEssential": false,
+      "createdAt": "2025-11-28T02:04:44.774Z",
+      "updatedAt": "2025-11-28T02:04:44.774Z",
+      "purchaseBatches": []
+    }
+  ],
+  "purchases": [
+    {
+      "id": "mii7z8mfz3ntbquocy",
+      "rawMaterialId": "mii7z8mbbn374rsi40t",
+      "quantity": 50,
+      "unit": "kg",
+      "unitPrice": 42,
+      "totalCost": 2100,
+      "remainingQty": 44.7,
+      "purchaseDate": "2024-11-15T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mbbn374rsi40t",
+        "name": "Maida",
+        "unit": "kg",
+        "isEssential": true,
+        "createdAt": "2025-11-28T02:04:44.771Z",
+        "updatedAt": "2025-11-28T02:04:44.772Z"
+      }
+    },
+    {
+      "id": "mii7z8mf226odkxanr3",
+      "rawMaterialId": "mii7z8mbbn374rsi40t",
+      "quantity": 25,
+      "unit": "kg",
+      "unitPrice": 43,
+      "totalCost": 1075,
+      "remainingQty": 25,
+      "purchaseDate": "2024-11-20T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mbbn374rsi40t",
+        "name": "Maida",
+        "unit": "kg",
+        "isEssential": true,
+        "createdAt": "2025-11-28T02:04:44.771Z",
+        "updatedAt": "2025-11-28T02:04:44.772Z"
+      }
+    },
+    {
+      "id": "mii7z8mfw9yfogngk0j",
+      "rawMaterialId": "mii7z8mck2j1u0l03c",
+      "quantity": 10,
+      "unit": "kg",
+      "unitPrice": 40,
+      "totalCost": 400,
+      "remainingQty": 7.3999999999999995,
+      "purchaseDate": "2024-11-10T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mck2j1u0l03c",
+        "name": "Sugar",
+        "unit": "kg",
+        "isEssential": true,
+        "createdAt": "2025-11-28T02:04:44.772Z",
+        "updatedAt": "2025-11-28T02:04:44.772Z"
+      }
+    },
+    {
+      "id": "mii7z8mfa5lr53gnhmd",
+      "rawMaterialId": "mii7z8mck2j1u0l03c",
+      "quantity": 5,
+      "unit": "kg",
+      "unitPrice": 41,
+      "totalCost": 205,
+      "remainingQty": 5,
+      "purchaseDate": "2024-11-25T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mck2j1u0l03c",
+        "name": "Sugar",
+        "unit": "kg",
+        "isEssential": true,
+        "createdAt": "2025-11-28T02:04:44.772Z",
+        "updatedAt": "2025-11-28T02:04:44.772Z"
+      }
+    },
+    {
+      "id": "mii7z8mf9xphgebax88",
+      "rawMaterialId": "mii7z8mckghvf1plx9",
+      "quantity": 5,
+      "unit": "liter",
+      "unitPrice": 120,
+      "totalCost": 600,
+      "remainingQty": 3.15,
+      "purchaseDate": "2024-11-12T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mckghvf1plx9",
+        "name": "Oil",
+        "unit": "liter",
+        "isEssential": true,
+        "createdAt": "2025-11-28T02:04:44.772Z",
+        "updatedAt": "2025-11-28T02:04:44.772Z"
+      }
+    },
+    {
+      "id": "mii7z8mfd600q3qsohb",
+      "rawMaterialId": "mii7z8mckghvf1plx9",
+      "quantity": 3,
+      "unit": "liter",
+      "unitPrice": 125,
+      "totalCost": 375,
+      "remainingQty": 3,
+      "purchaseDate": "2024-11-22T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mckghvf1plx9",
+        "name": "Oil",
+        "unit": "liter",
+        "isEssential": true,
+        "createdAt": "2025-11-28T02:04:44.772Z",
+        "updatedAt": "2025-11-28T02:04:44.772Z"
+      }
+    },
+    {
+      "id": "mii7z8mfydz8rxwfsta",
+      "rawMaterialId": "mii7z8mdmq8llawn76d",
+      "quantity": 4,
+      "unit": "kg",
+      "unitPrice": 200,
+      "totalCost": 800,
+      "remainingQty": 3.1,
+      "purchaseDate": "2024-11-14T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mdmq8llawn76d",
+        "name": "Dalda",
+        "unit": "kg",
+        "isEssential": true,
+        "createdAt": "2025-11-28T02:04:44.773Z",
+        "updatedAt": "2025-11-28T17:56:31.883Z"
+      }
+    },
+    {
+      "id": "mii7z8mfkvvaodcbcjq",
+      "rawMaterialId": "mii7z8mdlgojs6fsg2h",
+      "quantity": 19,
+      "unit": "kg",
+      "unitPrice": 110,
+      "totalCost": 2090,
+      "remainingQty": 18.3,
+      "purchaseDate": "2024-11-18T00:00:00.000Z",
+      "gasCylinderQty": 19,
+      "rawMaterial": {
+        "id": "mii7z8mdlgojs6fsg2h",
+        "name": "Gas Cylinder",
+        "unit": "kg",
+        "isEssential": true,
+        "createdAt": "2025-11-28T02:04:44.773Z",
+        "updatedAt": "2025-11-28T02:04:44.773Z"
+      }
+    },
+    {
+      "id": "mii7z8mgcsp8nz7mut",
+      "rawMaterialId": "mii7z8mdbjr0sqfh4jw",
+      "quantity": 2,
+      "unit": "liter",
+      "unitPrice": 150,
+      "totalCost": 300,
+      "remainingQty": 1.9,
+      "purchaseDate": "2024-11-16T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mdbjr0sqfh4jw",
+        "name": "vennila",
+        "unit": "liter",
+        "isEssential": true,
+        "createdAt": "2025-11-28T02:04:44.773Z",
+        "updatedAt": "2025-11-28T02:04:44.773Z"
+      }
+    },
+    {
+      "id": "mii7z8mg77aj7nrjj63",
+      "rawMaterialId": "mii7z8mdfcl2ns8tzkm",
+      "quantity": 100,
+      "unit": "pieces",
+      "unitPrice": 8,
+      "totalCost": 800,
+      "remainingQty": 86,
+      "purchaseDate": "2024-11-20T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mdfcl2ns8tzkm",
+        "name": "Egg",
+        "unit": "pieces",
+        "isEssential": false,
+        "createdAt": "2025-11-28T02:04:44.773Z",
+        "updatedAt": "2025-11-28T02:04:44.773Z"
+      }
+    },
+    {
+      "id": "mii7z8mgbpsx7i3w3ij",
+      "rawMaterialId": "mii7z8mdaeirc9t2nw",
+      "quantity": 10,
+      "unit": "liter",
+      "unitPrice": 60,
+      "totalCost": 600,
+      "remainingQty": 9.399999999999999,
+      "purchaseDate": "2024-11-21T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mdaeirc9t2nw",
+        "name": "Milk",
+        "unit": "liter",
+        "isEssential": false,
+        "createdAt": "2025-11-28T02:04:44.773Z",
+        "updatedAt": "2025-11-28T02:04:44.773Z"
+      }
+    },
+    {
+      "id": "mii7z8mg8neg99xwmur",
+      "rawMaterialId": "mii7z8mddf7907jvrb4",
+      "quantity": 500,
+      "unit": "g",
+      "unitPrice": 0.5,
+      "totalCost": 250,
+      "remainingQty": 500,
+      "purchaseDate": "2024-11-19T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mddf7907jvrb4",
+        "name": "Yeast",
+        "unit": "g",
+        "isEssential": false,
+        "createdAt": "2025-11-28T02:04:44.773Z",
+        "updatedAt": "2025-11-28T02:04:44.773Z"
+      }
+    },
+    {
+      "id": "mii7z8mg2tqg7czuk33",
+      "rawMaterialId": "mii7z8mdyh8916343z",
+      "quantity": 2,
+      "unit": "kg",
+      "unitPrice": 350,
+      "totalCost": 700,
+      "remainingQty": 1.7999999999999998,
+      "purchaseDate": "2024-11-17T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mdyh8916343z",
+        "name": "Cocoa Powder",
+        "unit": "kg",
+        "isEssential": false,
+        "createdAt": "2025-11-28T02:04:44.773Z",
+        "updatedAt": "2025-11-28T02:04:44.773Z"
+      }
+    },
+    {
+      "id": "mii7z8mgoptxlhlpm5",
+      "rawMaterialId": "mii7z8meftuf88evl0s",
+      "quantity": 3,
+      "unit": "kg",
+      "unitPrice": 400,
+      "totalCost": 1200,
+      "remainingQty": 3,
+      "purchaseDate": "2024-11-23T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8meftuf88evl0s",
+        "name": "Chocolate",
+        "unit": "kg",
+        "isEssential": false,
+        "createdAt": "2025-11-28T02:04:44.774Z",
+        "updatedAt": "2025-11-28T02:04:44.774Z"
+      }
+    },
+    {
+      "id": "mii7z8mhs04k3s19kq",
+      "rawMaterialId": "mii7z8mext0dfi2kew7",
+      "quantity": 5,
+      "unit": "kg",
+      "unitPrice": 30,
+      "totalCost": 150,
+      "remainingQty": 4.6,
+      "purchaseDate": "2024-11-24T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mext0dfi2kew7",
+        "name": "Onion",
+        "unit": "kg",
+        "isEssential": false,
+        "createdAt": "2025-11-28T02:04:44.774Z",
+        "updatedAt": "2025-11-28T02:04:44.774Z"
+      }
+    },
+    {
+      "id": "mii7z8mhex6t869rmkl",
+      "rawMaterialId": "mii7z8mep9c48rdb2jf",
+      "quantity": 10,
+      "unit": "kg",
+      "unitPrice": 25,
+      "totalCost": 250,
+      "remainingQty": 9.5,
+      "purchaseDate": "2024-11-24T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mep9c48rdb2jf",
+        "name": "Potato",
+        "unit": "kg",
+        "isEssential": false,
+        "createdAt": "2025-11-28T02:04:44.774Z",
+        "updatedAt": "2025-11-28T02:04:44.774Z"
+      }
+    },
+    {
+      "id": "mii7z8mhlvste5b3c49",
+      "rawMaterialId": "mii7z8melcodd23czjf",
+      "quantity": 5,
+      "unit": "kg",
+      "unitPrice": 20,
+      "totalCost": 100,
+      "remainingQty": 4.9,
+      "purchaseDate": "2024-11-15T00:00:00.000Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8melcodd23czjf",
+        "name": "Salt",
+        "unit": "kg",
+        "isEssential": false,
+        "createdAt": "2025-11-28T02:04:44.774Z",
+        "updatedAt": "2025-11-28T02:04:44.774Z"
+      }
+    },
+    {
+      "id": "mij604otu54e2v8bwvf",
+      "rawMaterialId": "mii7z8mdmq8llawn76d",
+      "quantity": 5,
+      "unit": "kg",
+      "unitPrice": 200,
+      "totalCost": 1000,
+      "remainingQty": 5,
+      "purchaseDate": "2025-11-28T17:57:13.277Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mdmq8llawn76d",
+        "name": "Dalda",
+        "unit": "kg",
+        "isEssential": true,
+        "createdAt": "2025-11-28T02:04:44.773Z",
+        "updatedAt": "2025-11-28T17:56:31.883Z"
+      }
+    },
+    {
+      "id": "mij66i4rie8aviib31e",
+      "rawMaterialId": "mii7z8mee662z8nkkae",
+      "quantity": 2,
+      "unit": "kg",
+      "unitPrice": 157.5,
+      "totalCost": 315,
+      "remainingQty": 1.98,
+      "purchaseDate": "2025-11-28T18:02:10.636Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mee662z8nkkae",
+        "name": "Chilli Powder",
+        "unit": "kg",
+        "isEssential": false,
+        "createdAt": "2025-11-28T02:04:44.774Z",
+        "updatedAt": "2025-11-28T02:04:44.774Z"
+      }
+    },
+    {
+      "id": "mij74qd8rb9lmxv72r",
+      "rawMaterialId": "mii7z8mduypjrehte1q",
+      "quantity": 2,
+      "unit": "kg",
+      "unitPrice": 225,
+      "totalCost": 450,
+      "remainingQty": 1.73,
+      "purchaseDate": "2025-11-28T18:28:47.612Z",
+      "gasCylinderQty": null,
+      "rawMaterial": {
+        "id": "mii7z8mduypjrehte1q",
+        "name": "Baking Powder",
+        "unit": "g",
+        "isEssential": false,
+        "createdAt": "2025-11-28T02:04:44.773Z",
+        "updatedAt": "2025-11-28T02:04:44.773Z"
+      }
+    }
+  ],
+  "recipes": [
+    {
+      "id": "mii7z8mh2bdkund8uqd",
+      "name": "Puff",
+      "outputQty": 15,
+      "outputUnit": "pieces",
+      "createdAt": "2025-11-28T02:04:44.777Z",
+      "updatedAt": "2025-11-28T02:04:44.777Z",
+      "ingredients": [
+        {
+          "id": "mii7z8mhbs99486sj69",
+          "recipeId": "mii7z8mh2bdkund8uqd",
+          "rawMaterialId": "mii7z8mbbn374rsi40t",
+          "quantity": 1,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mbbn374rsi40t",
+            "name": "Maida",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.771Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        },
+        {
+          "id": "mii7z8mhvxeqg6xfhj",
+          "recipeId": "mii7z8mh2bdkund8uqd",
+          "rawMaterialId": "mii7z8mckghvf1plx9",
+          "quantity": 0.5,
+          "unit": "liter",
+          "rawMaterial": {
+            "id": "mii7z8mckghvf1plx9",
+            "name": "Oil",
+            "unit": "liter",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.772Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        },
+        {
+          "id": "mii7z8mhaqt3em2avn",
+          "recipeId": "mii7z8mh2bdkund8uqd",
+          "rawMaterialId": "mii7z8mdmq8llawn76d",
+          "quantity": 0.5,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mdmq8llawn76d",
+            "name": "Dalda",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T17:56:31.883Z"
+          }
+        },
+        {
+          "id": "mii7z8mhlowpin0ir7c",
+          "recipeId": "mii7z8mh2bdkund8uqd",
+          "rawMaterialId": "mii7z8melcodd23czjf",
+          "quantity": 0.05,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8melcodd23czjf",
+            "name": "Salt",
+            "unit": "kg",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.774Z",
+            "updatedAt": "2025-11-28T02:04:44.774Z"
+          }
+        },
+        {
+          "id": "mii7z8mh5v85yeuj38g",
+          "recipeId": "mii7z8mh2bdkund8uqd",
+          "rawMaterialId": "mii7z8mdlgojs6fsg2h",
+          "quantity": 0.2,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mdlgojs6fsg2h",
+            "name": "Gas Cylinder",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T02:04:44.773Z"
+          }
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mhbtuqv3xr6cb",
+      "name": "Egg Puff",
+      "outputQty": 12,
+      "outputUnit": "pieces",
+      "createdAt": "2025-11-28T02:04:44.777Z",
+      "updatedAt": "2025-11-28T02:18:34.779Z",
+      "ingredients": [
+        {
+          "id": "mii8h124o4z664ektbg",
+          "recipeId": "mii7z8mhbtuqv3xr6cb",
+          "rawMaterialId": "mii7z8mbbn374rsi40t",
+          "quantity": 0.8,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mbbn374rsi40t",
+            "name": "Maida",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.771Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        },
+        {
+          "id": "mii8h124zthlmk7tmnr",
+          "recipeId": "mii7z8mhbtuqv3xr6cb",
+          "rawMaterialId": "mii7z8mckghvf1plx9",
+          "quantity": 0.4,
+          "unit": "liter",
+          "rawMaterial": {
+            "id": "mii7z8mckghvf1plx9",
+            "name": "Oil",
+            "unit": "liter",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.772Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        },
+        {
+          "id": "mii8h124o3jnbc6kt7m",
+          "recipeId": "mii7z8mhbtuqv3xr6cb",
+          "rawMaterialId": "mii7z8mdmq8llawn76d",
+          "quantity": 0.4,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mdmq8llawn76d",
+            "name": "Dalda",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T17:56:31.883Z"
+          }
+        },
+        {
+          "id": "mii8h124zxg4sww5gv",
+          "recipeId": "mii7z8mhbtuqv3xr6cb",
+          "rawMaterialId": "mii7z8mdfcl2ns8tzkm",
+          "quantity": 6,
+          "unit": "pieces",
+          "rawMaterial": {
+            "id": "mii7z8mdfcl2ns8tzkm",
+            "name": "Egg",
+            "unit": "pieces",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T02:04:44.773Z"
+          }
+        },
+        {
+          "id": "mii8h125x7comh7bsf",
+          "recipeId": "mii7z8mhbtuqv3xr6cb",
+          "rawMaterialId": "mii7z8mext0dfi2kew7",
+          "quantity": 0.2,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mext0dfi2kew7",
+            "name": "Onion",
+            "unit": "kg",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.774Z",
+            "updatedAt": "2025-11-28T02:04:44.774Z"
+          }
+        },
+        {
+          "id": "mii8h1255s3r8k3gfc7",
+          "recipeId": "mii7z8mhbtuqv3xr6cb",
+          "rawMaterialId": "mii7z8melcodd23czjf",
+          "quantity": 0.03,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8melcodd23czjf",
+            "name": "Salt",
+            "unit": "kg",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.774Z",
+            "updatedAt": "2025-11-28T02:04:44.774Z"
+          }
+        },
+        {
+          "id": "mii8h125zj73301vw5",
+          "recipeId": "mii7z8mhbtuqv3xr6cb",
+          "rawMaterialId": "mii7z8mee662z8nkkae",
+          "quantity": 0.01,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mee662z8nkkae",
+            "name": "Chilli Powder",
+            "unit": "kg",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.774Z",
+            "updatedAt": "2025-11-28T02:04:44.774Z"
+          }
+        },
+        {
+          "id": "mii8h1267ch25y3fx7",
+          "recipeId": "mii7z8mhbtuqv3xr6cb",
+          "rawMaterialId": "mii7z8mdlgojs6fsg2h",
+          "quantity": 0.15,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mdlgojs6fsg2h",
+            "name": "Gas Cylinder",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T02:04:44.773Z"
+          }
+        }
+      ]
+    },
+    {
+      "id": "mii7z8mis0b5kr7h2jm",
+      "name": "Chocolate Cake",
+      "outputQty": 1,
+      "outputUnit": "kg",
+      "createdAt": "2025-11-28T02:04:44.778Z",
+      "updatedAt": "2025-11-28T18:28:58.207Z",
+      "ingredients": [
+        {
+          "id": "mij74yjjcf8pf65vtk",
+          "recipeId": "mii7z8mis0b5kr7h2jm",
+          "rawMaterialId": "mii7z8mbbn374rsi40t",
+          "quantity": 0.5,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mbbn374rsi40t",
+            "name": "Maida",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.771Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        },
+        {
+          "id": "mij74yjjk87t0uxybhh",
+          "recipeId": "mii7z8mis0b5kr7h2jm",
+          "rawMaterialId": "mii7z8mck2j1u0l03c",
+          "quantity": 0.3,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mck2j1u0l03c",
+            "name": "Sugar",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.772Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        },
+        {
+          "id": "mij74yjj0qyszds6uocb",
+          "recipeId": "mii7z8mis0b5kr7h2jm",
+          "rawMaterialId": "mii7z8mdfcl2ns8tzkm",
+          "quantity": 4,
+          "unit": "pieces",
+          "rawMaterial": {
+            "id": "mii7z8mdfcl2ns8tzkm",
+            "name": "Egg",
+            "unit": "pieces",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T02:04:44.773Z"
+          }
+        },
+        {
+          "id": "mij74yjj6iexkv12ib",
+          "recipeId": "mii7z8mis0b5kr7h2jm",
+          "rawMaterialId": "mii7z8mckghvf1plx9",
+          "quantity": 0.2,
+          "unit": "liter",
+          "rawMaterial": {
+            "id": "mii7z8mckghvf1plx9",
+            "name": "Oil",
+            "unit": "liter",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.772Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        },
+        {
+          "id": "mij74yjjsuzdaftr83",
+          "recipeId": "mii7z8mis0b5kr7h2jm",
+          "rawMaterialId": "mii7z8mdaeirc9t2nw",
+          "quantity": 0.3,
+          "unit": "liter",
+          "rawMaterial": {
+            "id": "mii7z8mdaeirc9t2nw",
+            "name": "Milk",
+            "unit": "liter",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T02:04:44.773Z"
+          }
+        },
+        {
+          "id": "mij74yjk2iz5rtemo2v",
+          "recipeId": "mii7z8mis0b5kr7h2jm",
+          "rawMaterialId": "mii7z8mdyh8916343z",
+          "quantity": 0.1,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mdyh8916343z",
+            "name": "Cocoa Powder",
+            "unit": "kg",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T02:04:44.773Z"
+          }
+        },
+        {
+          "id": "mij74yjkpdbzxdc0jh",
+          "recipeId": "mii7z8mis0b5kr7h2jm",
+          "rawMaterialId": "mii7z8mduypjrehte1q",
+          "quantity": 10,
+          "unit": "g",
+          "rawMaterial": {
+            "id": "mii7z8mduypjrehte1q",
+            "name": "Baking Powder",
+            "unit": "g",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T02:04:44.773Z"
+          }
+        },
+        {
+          "id": "mij74yjks3rfsqm8b5",
+          "recipeId": "mii7z8mis0b5kr7h2jm",
+          "rawMaterialId": "mii7z8mdbjr0sqfh4jw",
+          "quantity": 0.05,
+          "unit": "liter",
+          "rawMaterial": {
+            "id": "mii7z8mdbjr0sqfh4jw",
+            "name": "vennila",
+            "unit": "liter",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T02:04:44.773Z"
+          }
+        },
+        {
+          "id": "mij74yjkzuso3qwy3n",
+          "recipeId": "mii7z8mis0b5kr7h2jm",
+          "rawMaterialId": "mii7z8mdlgojs6fsg2h",
+          "quantity": 0.1,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mdlgojs6fsg2h",
+            "name": "Gas Cylinder",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T02:04:44.773Z"
+          }
+        }
+      ]
+    },
+    {
+      "id": "mii7z8miwgtz444i73s",
+      "name": "Samosa",
+      "outputQty": 20,
+      "outputUnit": "pieces",
+      "createdAt": "2025-11-28T02:04:44.778Z",
+      "updatedAt": "2025-11-28T18:05:26.077Z",
+      "ingredients": [
+        {
+          "id": "mij6aoxpq6kcjdjnc9i",
+          "recipeId": "mii7z8miwgtz444i73s",
+          "rawMaterialId": "mii7z8mbbn374rsi40t",
+          "quantity": 0.5,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mbbn374rsi40t",
+            "name": "Maida",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.771Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        },
+        {
+          "id": "mij6aoxpqt4n89lx08",
+          "recipeId": "mii7z8miwgtz444i73s",
+          "rawMaterialId": "mii7z8mckghvf1plx9",
+          "quantity": 0.3,
+          "unit": "liter",
+          "rawMaterial": {
+            "id": "mii7z8mckghvf1plx9",
+            "name": "Oil",
+            "unit": "liter",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.772Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        },
+        {
+          "id": "mij6aoxpklcxs84d8jk",
+          "recipeId": "mii7z8miwgtz444i73s",
+          "rawMaterialId": "mii7z8mep9c48rdb2jf",
+          "quantity": 0.5,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mep9c48rdb2jf",
+            "name": "Potato",
+            "unit": "kg",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.774Z",
+            "updatedAt": "2025-11-28T02:04:44.774Z"
+          }
+        },
+        {
+          "id": "mij6aoxpn47b5thr7p",
+          "recipeId": "mii7z8miwgtz444i73s",
+          "rawMaterialId": "mii7z8mext0dfi2kew7",
+          "quantity": 0.2,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mext0dfi2kew7",
+            "name": "Onion",
+            "unit": "kg",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.774Z",
+            "updatedAt": "2025-11-28T02:04:44.774Z"
+          }
+        },
+        {
+          "id": "mij6aoxqbb2bp4i2u86",
+          "recipeId": "mii7z8miwgtz444i73s",
+          "rawMaterialId": "mii7z8melcodd23czjf",
+          "quantity": 0.02,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8melcodd23czjf",
+            "name": "Salt",
+            "unit": "kg",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.774Z",
+            "updatedAt": "2025-11-28T02:04:44.774Z"
+          }
+        },
+        {
+          "id": "mij6aoxqfokgd7h3cgj",
+          "recipeId": "mii7z8miwgtz444i73s",
+          "rawMaterialId": "mii7z8mee662z8nkkae",
+          "quantity": 0.01,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mee662z8nkkae",
+            "name": "Chilli Powder",
+            "unit": "kg",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.774Z",
+            "updatedAt": "2025-11-28T02:04:44.774Z"
+          }
+        },
+        {
+          "id": "mij6aoxq0ngic40c42a",
+          "recipeId": "mii7z8miwgtz444i73s",
+          "rawMaterialId": "mii7z8mdlgojs6fsg2h",
+          "quantity": 0.15,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mdlgojs6fsg2h",
+            "name": "Gas Cylinder",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T02:04:44.773Z"
+          }
+        }
+      ]
+    },
+    {
+      "id": "mii7z8miblejucxei2q",
+      "name": "Vada",
+      "outputQty": 30,
+      "outputUnit": "pieces",
+      "createdAt": "2025-11-28T02:04:44.778Z",
+      "updatedAt": "2025-11-28T02:04:44.778Z",
+      "ingredients": [
+        {
+          "id": "mii7z8mixf12lb1nor",
+          "recipeId": "mii7z8miblejucxei2q",
+          "rawMaterialId": "mii7z8mbbn374rsi40t",
+          "quantity": 0.3,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mbbn374rsi40t",
+            "name": "Maida",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.771Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        },
+        {
+          "id": "mii7z8migurdobc0yk",
+          "recipeId": "mii7z8miblejucxei2q",
+          "rawMaterialId": "mii7z8mckghvf1plx9",
+          "quantity": 0.5,
+          "unit": "liter",
+          "rawMaterial": {
+            "id": "mii7z8mckghvf1plx9",
+            "name": "Oil",
+            "unit": "liter",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.772Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        },
+        {
+          "id": "mii7z8mi2k9ss78hxfd",
+          "recipeId": "mii7z8miblejucxei2q",
+          "rawMaterialId": "mii7z8mext0dfi2kew7",
+          "quantity": 0.3,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mext0dfi2kew7",
+            "name": "Onion",
+            "unit": "kg",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.774Z",
+            "updatedAt": "2025-11-28T02:04:44.774Z"
+          }
+        },
+        {
+          "id": "mii7z8millisiu3tlel",
+          "recipeId": "mii7z8miblejucxei2q",
+          "rawMaterialId": "mii7z8melcodd23czjf",
+          "quantity": 0.02,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8melcodd23czjf",
+            "name": "Salt",
+            "unit": "kg",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.774Z",
+            "updatedAt": "2025-11-28T02:04:44.774Z"
+          }
+        },
+        {
+          "id": "mii7z8mi4yifo1xupey",
+          "recipeId": "mii7z8miblejucxei2q",
+          "rawMaterialId": "mii7z8mee662z8nkkae",
+          "quantity": 0.01,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mee662z8nkkae",
+            "name": "Chilli Powder",
+            "unit": "kg",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.774Z",
+            "updatedAt": "2025-11-28T02:04:44.774Z"
+          }
+        },
+        {
+          "id": "mii7z8mi9nu0u5gcxj6",
+          "recipeId": "mii7z8miblejucxei2q",
+          "rawMaterialId": "mii7z8mdlgojs6fsg2h",
+          "quantity": 0.2,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mdlgojs6fsg2h",
+            "name": "Gas Cylinder",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T02:04:44.773Z"
+          }
+        }
+      ]
+    },
+    {
+      "id": "mij7dilwpco7e6vp4cs",
+      "name": "pllum cake",
+      "outputQty": 2,
+      "outputUnit": "kg",
+      "createdAt": "2025-11-28T18:35:37.460Z",
+      "updatedAt": "2025-11-28T18:35:37.460Z",
+      "ingredients": [
+        {
+          "id": "mij7dilwxczdrtw5hv",
+          "recipeId": "mij7dilwpco7e6vp4cs",
+          "rawMaterialId": "mii7z8mbbn374rsi40t",
+          "quantity": 2,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mbbn374rsi40t",
+            "name": "Maida",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.771Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        },
+        {
+          "id": "mij7dilwlcsobzstik",
+          "recipeId": "mij7dilwpco7e6vp4cs",
+          "rawMaterialId": "mii7z8mduypjrehte1q",
+          "quantity": 250,
+          "unit": "g",
+          "rawMaterial": {
+            "id": "mii7z8mduypjrehte1q",
+            "name": "Baking Powder",
+            "unit": "g",
+            "isEssential": false,
+            "createdAt": "2025-11-28T02:04:44.773Z",
+            "updatedAt": "2025-11-28T02:04:44.773Z"
+          }
+        },
+        {
+          "id": "mij7dilwq22cjs3w6k",
+          "recipeId": "mij7dilwpco7e6vp4cs",
+          "rawMaterialId": "mii7z8mckghvf1plx9",
+          "quantity": 250,
+          "unit": "ml",
+          "rawMaterial": {
+            "id": "mii7z8mckghvf1plx9",
+            "name": "Oil",
+            "unit": "liter",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.772Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        },
+        {
+          "id": "mij7dilw06s45dftryle",
+          "recipeId": "mij7dilwpco7e6vp4cs",
+          "rawMaterialId": "mii7z8mck2j1u0l03c",
+          "quantity": 2,
+          "unit": "kg",
+          "rawMaterial": {
+            "id": "mii7z8mck2j1u0l03c",
+            "name": "Sugar",
+            "unit": "kg",
+            "isEssential": true,
+            "createdAt": "2025-11-28T02:04:44.772Z",
+            "updatedAt": "2025-11-28T02:04:44.772Z"
+          }
+        }
+      ]
+    }
+  ],
+  "productions": [
+    {
+      "id": "mii8w1ys340h8s2wkhp",
+      "data": {
+        "recipeId": "mii7z8mh2bdkund8uqd",
+        "batches": 1,
+        "totalCost": 225,
+        "costPerUnit": 15,
+        "variantName": null,
+        "baseRecipeCost": 225,
+        "additionalCost": null,
+        "utilityCost": 0,
+        "staffSalary": 0,
+        "costBreakdown": "[{\"materialId\":\"mii7z8mbbn374rsi40t\",\"materialName\":\"Maida\",\"quantity\":1,\"unit\":\"kg\",\"cost\":42,\"batchesUsed\":[{\"batchId\":\"mii7z8mfz3ntbquocy\",\"quantity\":1,\"unitPrice\":42}]},{\"materialId\":\"mii7z8mckghvf1plx9\",\"materialName\":\"Oil\",\"quantity\":0.5,\"unit\":\"liter\",\"cost\":60,\"batchesUsed\":[{\"batchId\":\"mii7z8mf9xphgebax88\",\"quantity\":0.5,\"unitPrice\":120}]},{\"materialId\":\"mii7z8mdmq8llawn76d\",\"materialName\":\"Dalda\",\"quantity\":0.5,\"unit\":\"kg\",\"cost\":100,\"batchesUsed\":[{\"batchId\":\"mii7z8mfydz8rxwfsta\",\"quantity\":0.5,\"unitPrice\":200}]},{\"materialId\":\"mii7z8melcodd23czjf\",\"materialName\":\"Salt\",\"quantity\":0.05,\"unit\":\"kg\",\"cost\":1,\"batchesUsed\":[{\"batchId\":\"mii7z8mhlvste5b3c49\",\"quantity\":0.05,\"unitPrice\":20}]},{\"materialId\":\"mii7z8mdlgojs6fsg2h\",\"materialName\":\"Gas Cylinder\",\"quantity\":0.2,\"unit\":\"kg\",\"cost\":22,\"batchesUsed\":[{\"batchId\":\"mii7z8mfkvvaodcbcjq\",\"quantity\":0.2,\"unitPrice\":110}]}]",
+        "variantIngredients": null
+      },
+      "include": {
+        "recipe": true
+      },
+      "productionDate": "2025-11-28T02:30:15.796Z",
+      "costBreakdown": "\"{}\"",
+      "variantIngredients": "\"{}\"",
+      "recipe": null
+    },
+    {
+      "id": "mij6evw9duqcfeq6kat",
+      "data": {
+        "recipeId": "mii7z8miwgtz444i73s",
+        "batches": 1,
+        "totalCost": 184.6325,
+        "costPerUnit": 9.231625,
+        "variantName": "egg puff ",
+        "baseRecipeCost": 93.97500000000001,
+        "additionalCost": 90.6575,
+        "utilityCost": 0,
+        "staffSalary": 0,
+        "costBreakdown": "[{\"materialId\":\"mii7z8mbbn374rsi40t\",\"materialName\":\"Maida\",\"quantity\":0.5,\"unit\":\"kg\",\"cost\":21,\"batchesUsed\":[{\"batchId\":\"mii7z8mfz3ntbquocy\",\"quantity\":0.5,\"unitPrice\":42}]},{\"materialId\":\"mii7z8mckghvf1plx9\",\"materialName\":\"Oil\",\"quantity\":0.3,\"unit\":\"liter\",\"cost\":36,\"batchesUsed\":[{\"batchId\":\"mii7z8mf9xphgebax88\",\"quantity\":0.3,\"unitPrice\":120}]},{\"materialId\":\"mii7z8mep9c48rdb2jf\",\"materialName\":\"Potato\",\"quantity\":0.5,\"unit\":\"kg\",\"cost\":12.5,\"batchesUsed\":[{\"batchId\":\"mii7z8mhex6t869rmkl\",\"quantity\":0.5,\"unitPrice\":25}]},{\"materialId\":\"mii7z8mext0dfi2kew7\",\"materialName\":\"Onion\",\"quantity\":0.2,\"unit\":\"kg\",\"cost\":6,\"batchesUsed\":[{\"batchId\":\"mii7z8mhs04k3s19kq\",\"quantity\":0.2,\"unitPrice\":30}]},{\"materialId\":\"mii7z8melcodd23czjf\",\"materialName\":\"Salt\",\"quantity\":0.02,\"unit\":\"kg\",\"cost\":0.4,\"batchesUsed\":[{\"batchId\":\"mii7z8mhlvste5b3c49\",\"quantity\":0.02,\"unitPrice\":20}]},{\"materialId\":\"mii7z8mee662z8nkkae\",\"materialName\":\"Chilli Powder\",\"quantity\":0.01,\"unit\":\"kg\",\"cost\":1.575,\"batchesUsed\":[{\"batchId\":\"mij66i4rie8aviib31e\",\"quantity\":0.01,\"unitPrice\":157.5}]},{\"materialId\":\"mii7z8mdlgojs6fsg2h\",\"materialName\":\"Gas Cylinder\",\"quantity\":0.15,\"unit\":\"kg\",\"cost\":16.5,\"batchesUsed\":[{\"batchId\":\"mii7z8mfkvvaodcbcjq\",\"quantity\":0.15,\"unitPrice\":110}]}]",
+        "variantIngredients": "[{\"rawMaterialId\":\"mii7z8mdfcl2ns8tzkm\",\"quantity\":\"6\",\"unit\":\"pieces\"},{\"rawMaterialId\":\"mii7z8mext0dfi2kew7\",\"quantity\":\"150\",\"unit\":\"g\"},{\"rawMaterialId\":\"mii7z8mee662z8nkkae\",\"quantity\":\"1\",\"unit\":\"g\"},{\"rawMaterialId\":\"mii7z8mckghvf1plx9\",\"quantity\":\"150\",\"unit\":\"ml\"},{\"rawMaterialId\":\"mii7z8mdmq8llawn76d\",\"quantity\":\"100\",\"unit\":\"g\"}]"
+      },
+      "include": {
+        "recipe": true
+      },
+      "productionDate": "2025-11-28T18:08:41.721Z",
+      "costBreakdown": "\"{}\"",
+      "variantIngredients": "\"{}\"",
+      "recipe": null
+    },
+    {
+      "id": "mij6rhgr5b00hmhd6tv",
+      "recipeId": "mii7z8mhbtuqv3xr6cb",
+      "batches": 1,
+      "totalCost": 358.9325,
+      "costPerUnit": 29.911041666666666,
+      "productionDate": "2025-11-28T18:18:29.547Z",
+      "variantName": "samosa",
+      "baseRecipeCost": 234.27499999999998,
+      "additionalCost": 124.6575,
+      "utilityCost": 0,
+      "staffSalary": 0,
+      "costBreakdown": "[{\"materialId\":\"mii7z8mbbn374rsi40t\",\"materialName\":\"Maida\",\"quantity\":0.8,\"unit\":\"kg\",\"cost\":33.6,\"batchesUsed\":[{\"batchId\":\"mii7z8mfz3ntbquocy\",\"quantity\":0.8,\"unitPrice\":42}]},{\"materialId\":\"mii7z8mckghvf1plx9\",\"materialName\":\"Oil\",\"quantity\":0.4,\"unit\":\"liter\",\"cost\":48,\"batchesUsed\":[{\"batchId\":\"mii7z8mf9xphgebax88\",\"quantity\":0.4,\"unitPrice\":120}]},{\"materialId\":\"mii7z8mdmq8llawn76d\",\"materialName\":\"Dalda\",\"quantity\":0.4,\"unit\":\"kg\",\"cost\":80,\"batchesUsed\":[{\"batchId\":\"mii7z8mfydz8rxwfsta\",\"quantity\":0.4,\"unitPrice\":200}]},{\"materialId\":\"mii7z8mdfcl2ns8tzkm\",\"materialName\":\"Egg\",\"quantity\":6,\"unit\":\"pieces\",\"cost\":48,\"batchesUsed\":[{\"batchId\":\"mii7z8mg77aj7nrjj63\",\"quantity\":6,\"unitPrice\":8}]},{\"materialId\":\"mii7z8mext0dfi2kew7\",\"materialName\":\"Onion\",\"quantity\":0.2,\"unit\":\"kg\",\"cost\":6,\"batchesUsed\":[{\"batchId\":\"mii7z8mhs04k3s19kq\",\"quantity\":0.2,\"unitPrice\":30}]},{\"materialId\":\"mii7z8melcodd23czjf\",\"materialName\":\"Salt\",\"quantity\":0.03,\"unit\":\"kg\",\"cost\":0.6,\"batchesUsed\":[{\"batchId\":\"mii7z8mhlvste5b3c49\",\"quantity\":0.03,\"unitPrice\":20}]},{\"materialId\":\"mii7z8mee662z8nkkae\",\"materialName\":\"Chilli Powder\",\"quantity\":0.01,\"unit\":\"kg\",\"cost\":1.575,\"batchesUsed\":[{\"batchId\":\"mij66i4rie8aviib31e\",\"quantity\":0.01,\"unitPrice\":157.5}]},{\"materialId\":\"mii7z8mdlgojs6fsg2h\",\"materialName\":\"Gas Cylinder\",\"quantity\":0.15,\"unit\":\"kg\",\"cost\":16.5,\"batchesUsed\":[{\"batchId\":\"mii7z8mfkvvaodcbcjq\",\"quantity\":0.15,\"unitPrice\":110}]}]",
+      "variantIngredients": "[{\"rawMaterialId\":\"mii7z8mee662z8nkkae\",\"quantity\":\"1\",\"unit\":\"g\"},{\"rawMaterialId\":\"mii7z8mext0dfi2kew7\",\"quantity\":\"150\",\"unit\":\"g\"},{\"rawMaterialId\":\"mii7z8mckghvf1plx9\",\"quantity\":\"1\",\"unit\":\"liter\"}]",
+      "recipe": {
+        "id": "mii7z8mhbtuqv3xr6cb",
+        "name": "Egg Puff",
+        "outputQty": 12,
+        "outputUnit": "pieces",
+        "createdAt": "2025-11-28T02:04:44.777Z",
+        "updatedAt": "2025-11-28T02:18:34.779Z",
+        "ingredients": {
+          "create": [
+            {
+              "rawMaterialId": "mii7z8mbbn374rsi40t",
+              "quantity": 0.8,
+              "unit": "kg"
+            },
+            {
+              "rawMaterialId": "mii7z8mckghvf1plx9",
+              "quantity": 0.4,
+              "unit": "liter"
+            },
+            {
+              "rawMaterialId": "mii7z8mdmq8llawn76d",
+              "quantity": 0.4,
+              "unit": "kg"
+            },
+            {
+              "rawMaterialId": "mii7z8mdfcl2ns8tzkm",
+              "quantity": 6,
+              "unit": "pieces"
+            },
+            {
+              "rawMaterialId": "mii7z8mext0dfi2kew7",
+              "quantity": 0.2,
+              "unit": "kg"
+            },
+            {
+              "rawMaterialId": "mii7z8melcodd23czjf",
+              "quantity": 0.03,
+              "unit": "kg"
+            },
+            {
+              "rawMaterialId": "mii7z8mee662z8nkkae",
+              "quantity": 0.01,
+              "unit": "kg"
+            },
+            {
+              "rawMaterialId": "mii7z8mdlgojs6fsg2h",
+              "quantity": 0.15,
+              "unit": "kg"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "mij765ctzksugerjaw",
+      "recipeId": "mii7z8mis0b5kr7h2jm",
+      "batches": 1,
+      "totalCost": 162.75,
+      "costPerUnit": 162.75,
+      "productionDate": "2025-11-28T18:29:53.693Z",
+      "variantName": null,
+      "baseRecipeCost": 162.75,
+      "additionalCost": null,
+      "utilityCost": 0,
+      "staffSalary": 0,
+      "costBreakdown": "[{\"materialId\":\"mii7z8mbbn374rsi40t\",\"materialName\":\"Maida\",\"quantity\":0.5,\"unit\":\"kg\",\"cost\":21,\"batchesUsed\":[{\"batchId\":\"mii7z8mfz3ntbquocy\",\"quantity\":0.5,\"unitPrice\":42}]},{\"materialId\":\"mii7z8mck2j1u0l03c\",\"materialName\":\"Sugar\",\"quantity\":0.3,\"unit\":\"kg\",\"cost\":12,\"batchesUsed\":[{\"batchId\":\"mii7z8mfw9yfogngk0j\",\"quantity\":0.3,\"unitPrice\":40}]},{\"materialId\":\"mii7z8mdfcl2ns8tzkm\",\"materialName\":\"Egg\",\"quantity\":4,\"unit\":\"pieces\",\"cost\":32,\"batchesUsed\":[{\"batchId\":\"mii7z8mg77aj7nrjj63\",\"quantity\":4,\"unitPrice\":8}]},{\"materialId\":\"mii7z8mckghvf1plx9\",\"materialName\":\"Oil\",\"quantity\":0.2,\"unit\":\"liter\",\"cost\":24,\"batchesUsed\":[{\"batchId\":\"mii7z8mf9xphgebax88\",\"quantity\":0.2,\"unitPrice\":120}]},{\"materialId\":\"mii7z8mdaeirc9t2nw\",\"materialName\":\"Milk\",\"quantity\":0.3,\"unit\":\"liter\",\"cost\":18,\"batchesUsed\":[{\"batchId\":\"mii7z8mgbpsx7i3w3ij\",\"quantity\":0.3,\"unitPrice\":60}]},{\"materialId\":\"mii7z8mdyh8916343z\",\"materialName\":\"Cocoa Powder\",\"quantity\":0.1,\"unit\":\"kg\",\"cost\":35,\"batchesUsed\":[{\"batchId\":\"mii7z8mg2tqg7czuk33\",\"quantity\":0.1,\"unitPrice\":350}]},{\"materialId\":\"mii7z8mduypjrehte1q\",\"materialName\":\"Baking Powder\",\"quantity\":10,\"unit\":\"g\",\"cost\":2.25,\"batchesUsed\":[{\"batchId\":\"mij74qd8rb9lmxv72r\",\"quantity\":10,\"unitPrice\":225}]},{\"materialId\":\"mii7z8mdbjr0sqfh4jw\",\"materialName\":\"vennila\",\"quantity\":0.05,\"unit\":\"liter\",\"cost\":7.5,\"batchesUsed\":[{\"batchId\":\"mii7z8mgcsp8nz7mut\",\"quantity\":0.05,\"unitPrice\":150}]},{\"materialId\":\"mii7z8mdlgojs6fsg2h\",\"materialName\":\"Gas Cylinder\",\"quantity\":0.1,\"unit\":\"kg\",\"cost\":11,\"batchesUsed\":[{\"batchId\":\"mii7z8mfkvvaodcbcjq\",\"quantity\":0.1,\"unitPrice\":110}]}]",
+      "variantIngredients": null,
+      "recipe": {
+        "id": "mii7z8mis0b5kr7h2jm",
+        "name": "Chocolate Cake",
+        "outputQty": 1,
+        "outputUnit": "kg",
+        "createdAt": "2025-11-28T02:04:44.778Z",
+        "updatedAt": "2025-11-28T18:28:58.207Z"
+      }
+    },
+    {
+      "id": "mij7f47zuva6l4gr0bl",
+      "recipeId": "mij7dilwpco7e6vp4cs",
+      "batches": 1,
+      "totalCost": 250.25,
+      "costPerUnit": 125.125,
+      "productionDate": "2025-11-28T18:36:52.127Z",
+      "variantName": null,
+      "baseRecipeCost": 250.25,
+      "additionalCost": null,
+      "utilityCost": 0,
+      "staffSalary": 0,
+      "costBreakdown": "[{\"materialId\":\"mii7z8mbbn374rsi40t\",\"materialName\":\"Maida\",\"quantity\":2,\"unit\":\"kg\",\"cost\":84,\"batchesUsed\":[{\"batchId\":\"mii7z8mfz3ntbquocy\",\"quantity\":2,\"unitPrice\":42}]},{\"materialId\":\"mii7z8mduypjrehte1q\",\"materialName\":\"Baking Powder\",\"quantity\":250,\"unit\":\"g\",\"cost\":56.25,\"batchesUsed\":[{\"batchId\":\"mij74qd8rb9lmxv72r\",\"quantity\":250,\"unitPrice\":225}]},{\"materialId\":\"mii7z8mckghvf1plx9\",\"materialName\":\"Oil\",\"quantity\":250,\"unit\":\"ml\",\"cost\":30,\"batchesUsed\":[{\"batchId\":\"mii7z8mf9xphgebax88\",\"quantity\":250,\"unitPrice\":120}]},{\"materialId\":\"mii7z8mck2j1u0l03c\",\"materialName\":\"Sugar\",\"quantity\":2,\"unit\":\"kg\",\"cost\":80,\"batchesUsed\":[{\"batchId\":\"mii7z8mfw9yfogngk0j\",\"quantity\":2,\"unitPrice\":40}]}]",
+      "variantIngredients": null,
+      "recipe": {
+        "id": "mij7dilwpco7e6vp4cs",
+        "name": "pllum cake",
+        "outputQty": 2,
+        "outputUnit": "kg",
+        "createdAt": "2025-11-28T18:35:37.460Z",
+        "updatedAt": "2025-11-28T18:35:37.460Z"
+      }
+    },
+    {
+      "id": "mij8cg526x7z7310f2r",
+      "recipeId": "mii7z8mis0b5kr7h2jm",
+      "batches": 1,
+      "totalCost": 162.75,
+      "costPerUnit": 162.75,
+      "productionDate": "2025-11-28T19:02:47.222Z",
+      "variantName": null,
+      "baseRecipeCost": 162.75,
+      "additionalCost": null,
+      "utilityCost": 0,
+      "staffSalary": 0,
+      "costBreakdown": "[{\"materialId\":\"mii7z8mbbn374rsi40t\",\"materialName\":\"Maida\",\"quantity\":0.5,\"unit\":\"kg\",\"cost\":21,\"batchesUsed\":[{\"batchId\":\"mii7z8mfz3ntbquocy\",\"quantity\":0.5,\"unitPrice\":42}]},{\"materialId\":\"mii7z8mck2j1u0l03c\",\"materialName\":\"Sugar\",\"quantity\":0.3,\"unit\":\"kg\",\"cost\":12,\"batchesUsed\":[{\"batchId\":\"mii7z8mfw9yfogngk0j\",\"quantity\":0.3,\"unitPrice\":40}]},{\"materialId\":\"mii7z8mdfcl2ns8tzkm\",\"materialName\":\"Egg\",\"quantity\":4,\"unit\":\"pieces\",\"cost\":32,\"batchesUsed\":[{\"batchId\":\"mii7z8mg77aj7nrjj63\",\"quantity\":4,\"unitPrice\":8}]},{\"materialId\":\"mii7z8mckghvf1plx9\",\"materialName\":\"Oil\",\"quantity\":0.2,\"unit\":\"liter\",\"cost\":24,\"batchesUsed\":[{\"batchId\":\"mii7z8mf9xphgebax88\",\"quantity\":0.2,\"unitPrice\":120}]},{\"materialId\":\"mii7z8mdaeirc9t2nw\",\"materialName\":\"Milk\",\"quantity\":0.3,\"unit\":\"liter\",\"cost\":18,\"batchesUsed\":[{\"batchId\":\"mii7z8mgbpsx7i3w3ij\",\"quantity\":0.3,\"unitPrice\":60}]},{\"materialId\":\"mii7z8mdyh8916343z\",\"materialName\":\"Cocoa Powder\",\"quantity\":0.1,\"unit\":\"kg\",\"cost\":35,\"batchesUsed\":[{\"batchId\":\"mii7z8mg2tqg7czuk33\",\"quantity\":0.1,\"unitPrice\":350}]},{\"materialId\":\"mii7z8mduypjrehte1q\",\"materialName\":\"Baking Powder\",\"quantity\":10,\"unit\":\"g\",\"cost\":2.25,\"batchesUsed\":[{\"batchId\":\"mij74qd8rb9lmxv72r\",\"quantity\":10,\"unitPrice\":225}]},{\"materialId\":\"mii7z8mdbjr0sqfh4jw\",\"materialName\":\"vennila\",\"quantity\":0.05,\"unit\":\"liter\",\"cost\":7.5,\"batchesUsed\":[{\"batchId\":\"mii7z8mgcsp8nz7mut\",\"quantity\":0.05,\"unitPrice\":150}]},{\"materialId\":\"mii7z8mdlgojs6fsg2h\",\"materialName\":\"Gas Cylinder\",\"quantity\":0.1,\"unit\":\"kg\",\"cost\":11,\"batchesUsed\":[{\"batchId\":\"mii7z8mfkvvaodcbcjq\",\"quantity\":0.1,\"unitPrice\":110}]}]",
+      "variantIngredients": null,
+      "recipe": {
+        "id": "mii7z8mis0b5kr7h2jm",
+        "name": "Chocolate Cake",
+        "outputQty": 1,
+        "outputUnit": "kg",
+        "createdAt": "2025-11-28T02:04:44.778Z",
+        "updatedAt": "2025-11-28T18:28:58.207Z"
+      }
+    }
+  ],
+  "users": [
+    {
+      "id": "miht128mkm64ayu3jdb",
+      "username": "admin",
+      "password": "$2a$10$y3m1RmbUUeTOTi0dECiyDOOgG//AUKjEWCOrT.LjVl2fQxwfCOnoO",
+      "role": "admin",
+      "isActive": true,
+      "createdAt": "2025-11-27T19:06:15.574Z",
+      "updatedAt": "2025-11-27T19:06:15.576Z"
+    }
+  ],
+  "settings": {
+    "id": "miht128oxh3t8ih7538",
+    "shopName": "RISHA FOODS AND BAKERY",
+    "shopAddress": "Server No: 103/1A2, Agaramel, Poonamallee Taluk, Chennai - 600123",
+    "shopEmail": "rishafoodsandbakery@gmail.com",
+    "shopPhone": "",
+    "currency": "₹",
+    "taxRate": 0,
+    "printTextSize": "medium",
+    "updatedAt": "2025-11-27T19:06:15.576Z"
+  }
+}

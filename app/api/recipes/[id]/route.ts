@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma, reloadDatabase } from '@/lib/prisma'
 
 // GET single recipe
 export async function GET(
@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const recipe = await prisma.recipe.findUnique({
+    const recipe = prisma.recipe.findUnique({
       where: { id: params.id },
       include: {
         ingredients: {
@@ -27,19 +27,25 @@ export async function GET(
 
     const formattedRecipe = {
       id: recipe.id,
-      name: recipe.name,
-      outputQty: recipe.outputQty,
-      outputUnit: recipe.outputUnit,
-      ingredients: recipe.ingredients.map((ing) => ({
-        id: ing.id,
-        recipeId: ing.recipeId,
-        rawMaterialId: ing.rawMaterialId,
-        rawMaterialName: ing.rawMaterial.name,
-        quantity: ing.quantity,
-        unit: ing.unit,
-      })),
-      createdAt: recipe.createdAt,
-      updatedAt: recipe.updatedAt,
+      name: recipe.name || 'Unnamed Recipe',
+      outputQty: recipe.outputQty || 0,
+      outputUnit: recipe.outputUnit || 'pieces',
+      unitWeight: recipe.unitWeight || null,
+      ingredients: (recipe.ingredients || []).map((ing: any) => {
+        const rawMaterial = ing.rawMaterial || (ing as any).rawMaterialData
+        const materialName = rawMaterial?.name || (rawMaterial as any)?.data?.name || 'Unknown Material'
+        
+        return {
+          id: ing.id || '',
+          recipeId: ing.recipeId || recipe.id,
+          rawMaterialId: ing.rawMaterialId || '',
+          rawMaterialName: materialName,
+          quantity: ing.quantity || 0,
+          unit: ing.unit || 'pieces',
+        }
+      }),
+      createdAt: recipe.createdAt || new Date().toISOString(),
+      updatedAt: recipe.updatedAt || new Date().toISOString(),
     }
 
     return NextResponse.json(formattedRecipe)
@@ -59,28 +65,43 @@ export async function PUT(
 ) {
   try {
     const body = await request.json()
-    const { name, outputQty, outputUnit, ingredients } = body
+    const { name, outputQty, outputUnit, ingredients, unitWeight } = body
 
     // Delete existing ingredients
-    await prisma.recipeIngredient.deleteMany({
+    prisma.recipeIngredient.deleteMany({
       where: { recipeId: params.id },
     })
 
-    // Update recipe
-    const recipe = await prisma.recipe.update({
+    // Update recipe (without nested ingredients)
+    const recipe = prisma.recipe.update({
       where: { id: params.id },
       data: {
         name: name?.trim(),
         outputQty: outputQty ? parseFloat(outputQty) : undefined,
         outputUnit: outputUnit,
-        ingredients: ingredients ? {
-          create: ingredients.map((ing: any) => ({
+        unitWeight: unitWeight !== undefined ? (unitWeight ? parseFloat(unitWeight) : null) : undefined,
+      },
+    })
+
+    // Create ingredients separately
+    if (ingredients && Array.isArray(ingredients) && ingredients.length > 0) {
+      for (const ing of ingredients) {
+        if (ing.rawMaterialId && ing.quantity) {
+          prisma.recipeIngredient.create({
+            data: {
+              recipeId: params.id,
             rawMaterialId: ing.rawMaterialId,
             quantity: parseFloat(ing.quantity),
-            unit: ing.unit,
-          })),
-        } : undefined,
-      },
+              unit: ing.unit || 'kg',
+            }
+          })
+        }
+      }
+    }
+
+    // Fetch recipe with ingredients
+    const recipeWithIngredients = prisma.recipe.findUnique({
+      where: { id: params.id },
       include: {
         ingredients: {
           include: {
@@ -90,21 +111,34 @@ export async function PUT(
       },
     })
 
+    if (!recipeWithIngredients) {
+      return NextResponse.json(
+        { error: 'Recipe not found after update' },
+        { status: 404 }
+      )
+    }
+
     const formattedRecipe = {
-      id: recipe.id,
-      name: recipe.name,
-      outputQty: recipe.outputQty,
-      outputUnit: recipe.outputUnit,
-      ingredients: recipe.ingredients.map((ing) => ({
-        id: ing.id,
-        recipeId: ing.recipeId,
-        rawMaterialId: ing.rawMaterialId,
-        rawMaterialName: ing.rawMaterial.name,
-        quantity: ing.quantity,
-        unit: ing.unit,
-      })),
-      createdAt: recipe.createdAt,
-      updatedAt: recipe.updatedAt,
+      id: recipeWithIngredients.id,
+      name: recipeWithIngredients.name || 'Unnamed Recipe',
+      outputQty: recipeWithIngredients.outputQty || 0,
+      outputUnit: recipeWithIngredients.outputUnit || 'pieces',
+      unitWeight: recipeWithIngredients.unitWeight || null,
+      ingredients: (recipeWithIngredients.ingredients || []).map((ing: any) => {
+        const rawMaterial = ing.rawMaterial || (ing as any).rawMaterialData
+        const materialName = rawMaterial?.name || (rawMaterial as any)?.data?.name || 'Unknown Material'
+        
+        return {
+          id: ing.id || '',
+          recipeId: ing.recipeId || recipeWithIngredients.id,
+          rawMaterialId: ing.rawMaterialId || '',
+          rawMaterialName: materialName,
+          quantity: ing.quantity || 0,
+          unit: ing.unit || 'pieces',
+        }
+      }),
+      createdAt: recipeWithIngredients.createdAt || new Date().toISOString(),
+      updatedAt: recipeWithIngredients.updatedAt || new Date().toISOString(),
     }
 
     return NextResponse.json(formattedRecipe)
@@ -123,9 +157,60 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    await prisma.recipe.delete({
+    // Get user role from request header
+    const userRole = (request.headers.get('x-user-role') || 'user') as 'user' | 'supervisor' | 'admin'
+    
+    // Get access control settings
+    const settings = prisma.shopSettings.findFirst()
+    const accessControl = (settings as any)?.accessControl || {}
+    
+    // Check permission for recipes_delete
+    const hasPermission = accessControl.recipes_delete?.[userRole] ?? (userRole === 'admin')
+    
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: 'Permission denied. You do not have access to delete recipes.' },
+        { status: 403 }
+      )
+    }
+    
+    // Get recipe with ingredients before deleting
+    const recipe = prisma.recipe.findUnique({
+      where: { id: params.id },
+      include: {
+        ingredients: true,
+      },
+    })
+    
+    if (!recipe) {
+      return NextResponse.json(
+        { error: 'Recipe not found' },
+        { status: 404 }
+      )
+    }
+    
+    // Move to deleted_items (soft delete)
+    const deletedItem = prisma.deletedItem.create({
+      data: {
+        category: 'recipe',
+        originalData: recipe,
+      },
+    })
+    console.log('Recipe moved to deleted_items:', deletedItem.id, 'Category:', deletedItem.category)
+    
+    // Delete recipe and its ingredients
+    prisma.recipeIngredient.deleteMany({
+      where: { recipeId: params.id },
+    })
+    
+    prisma.recipe.delete({
       where: { id: params.id },
     })
+    
+    // Reload database to ensure consistency
+    if (typeof reloadDatabase === 'function') {
+      reloadDatabase()
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma, reloadDatabase } from '@/lib/prisma'
 
 // GET single purchase
 export async function GET(
@@ -7,11 +7,8 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const purchase = await prisma.purchaseBatch.findUnique({
+    const purchase = prisma.purchaseBatch.findUnique({
       where: { id: params.id },
-      include: {
-        rawMaterial: true,
-      },
     })
 
     if (!purchase) {
@@ -21,10 +18,23 @@ export async function GET(
       )
     }
 
+    // Get material name safely (JSON DB might not include relation)
+    const rawMaterial = purchase.rawMaterial || (purchase as any).rawMaterialData
+    let materialName = 'Unknown Material'
+    if (rawMaterial) {
+      materialName = rawMaterial.name || (rawMaterial as any)?.data?.name || 'Unknown Material'
+    } else if (purchase.rawMaterialId) {
+      // Fallback: fetch material separately if not included
+      const material = prisma.rawMaterial.findUnique({
+        where: { id: purchase.rawMaterialId },
+      })
+      materialName = material?.name || 'Unknown Material'
+    }
+
     return NextResponse.json({
       id: purchase.id,
       rawMaterialId: purchase.rawMaterialId,
-      rawMaterialName: purchase.rawMaterial.name,
+      rawMaterialName: materialName,
       quantity: purchase.quantity,
       unit: purchase.unit,
       unitPrice: purchase.unitPrice,
@@ -51,6 +61,18 @@ export async function PUT(
     const body = await request.json()
     const { quantity, unit, unitPrice, totalCost, purchaseDate, gasCylinderQty } = body
 
+    // Check if purchase exists
+    const existingPurchase = prisma.purchaseBatch.findUnique({
+      where: { id: params.id },
+    })
+
+    if (!existingPurchase) {
+      return NextResponse.json(
+        { error: 'Purchase not found' },
+        { status: 404 }
+      )
+    }
+
     // Calculate unit price if total cost is provided
     let finalUnitPrice = unitPrice
     let finalTotalCost = totalCost
@@ -63,32 +85,46 @@ export async function PUT(
       finalTotalCost = unitPrice * quantity
     }
 
-    const purchase = await prisma.purchaseBatch.update({
+    const purchase = prisma.purchaseBatch.update({
       where: { id: params.id },
       data: {
-        quantity: quantity ? parseFloat(quantity) : undefined,
-        unit: unit,
-        unitPrice: finalUnitPrice,
-        totalCost: finalTotalCost,
-        remainingQty: quantity ? parseFloat(quantity) : undefined,
-        purchaseDate: purchaseDate ? new Date(purchaseDate) : undefined,
-        gasCylinderQty: gasCylinderQty ? parseFloat(gasCylinderQty) : null,
-      },
-      include: {
-        rawMaterial: true,
+        quantity: quantity ? parseFloat(quantity) : existingPurchase.quantity,
+        unit: unit || existingPurchase.unit,
+        unitPrice: finalUnitPrice || existingPurchase.unitPrice,
+        totalCost: finalTotalCost || existingPurchase.totalCost,
+        remainingQty: quantity ? parseFloat(quantity) : existingPurchase.remainingQty,
+        purchaseDate: purchaseDate ? new Date(purchaseDate).toISOString() : existingPurchase.purchaseDate,
+        gasCylinderQty: gasCylinderQty !== undefined ? (gasCylinderQty ? parseFloat(gasCylinderQty) : null) : existingPurchase.gasCylinderQty,
       },
     })
+
+    if (!purchase) {
+      return NextResponse.json(
+        { error: 'Failed to update purchase' },
+        { status: 500 }
+      )
+    }
+
+    // Get material name separately
+    let materialName = 'Unknown Material'
+    if (purchase.rawMaterialId) {
+      const material = prisma.rawMaterial.findUnique({
+        where: { id: purchase.rawMaterialId },
+      })
+      materialName = material?.name || 'Unknown Material'
+    }
 
     return NextResponse.json({
       id: purchase.id,
       rawMaterialId: purchase.rawMaterialId,
-      rawMaterialName: purchase.rawMaterial.name,
+      rawMaterialName: materialName,
       quantity: purchase.quantity,
       unit: purchase.unit,
       unitPrice: purchase.unitPrice,
       totalCost: purchase.totalCost,
       purchaseDate: purchase.purchaseDate,
       remainingQty: purchase.remainingQty,
+      gasCylinderQty: purchase.gasCylinderQty,
     })
   } catch (error) {
     console.error('Error updating purchase:', error)
@@ -99,15 +135,58 @@ export async function PUT(
   }
 }
 
-// DELETE purchase
+// DELETE purchase (move to deleted_items)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    await prisma.purchaseBatch.delete({
+    // Get user role from request header
+    const userRole = (request.headers.get('x-user-role') || 'user') as 'user' | 'supervisor' | 'admin'
+    
+    // Get access control settings
+    const settings = prisma.shopSettings.findFirst()
+    const accessControl = (settings as any)?.accessControl || {}
+    
+    // Check permission for purchases_delete
+    const hasPermission = accessControl.purchases_delete?.[userRole] ?? (userRole === 'admin')
+    
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: 'Permission denied. You do not have access to delete purchases.' },
+        { status: 403 }
+      )
+    }
+
+    const purchase = prisma.purchaseBatch.findUnique({
       where: { id: params.id },
     })
+
+    if (!purchase) {
+      return NextResponse.json(
+        { error: 'Purchase not found' },
+        { status: 404 }
+      )
+    }
+
+    // Move to deleted_items
+    const deletedItem = prisma.deletedItem.create({
+      data: {
+        category: 'purchase',
+        originalData: purchase,
+      },
+    })
+    console.log('Purchase moved to deleted_items:', deletedItem.id)
+
+    // Delete from purchase_batches
+    prisma.purchaseBatch.delete({
+      where: { id: params.id },
+    })
+    
+    // Reload database to ensure consistency
+    if (typeof reloadDatabase === 'function') {
+      reloadDatabase()
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {

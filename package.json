@@ -4,22 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
-    "build": "prisma generate && next build",
-    "netlify-build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
-    "db:studio": "prisma studio",
-    "db:seed": "tsx prisma/seed.ts",
     "create-admin": "tsx scripts/create-admin.ts",
-    "postinstall": "prisma generate"
+    "test-data": "tsx scripts/test-data.ts",
+    "seed-data": "tsx scripts/seed-complete-data.ts",
+    "test": "tsx scripts/full-test.ts"
   },
   "dependencies": {
     "next": "14.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@prisma/client": "^5.7.1",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.1",
@@ -30,7 +26,8 @@
     "react-hook-form": "^7.48.2",
     "zod": "^3.22.4",
     "@hookform/resolvers": "^3.3.2",
-    "swr": "^2.2.4"
+    "swr": "^2.2.4",
+    "@netlify/plugin-nextjs": "^4.39.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",
@@ -44,7 +41,6 @@
     "autoprefixer": "^10.4.16",
     "eslint": "^8.56.0",
     "eslint-config-next": "14.0.4",
-    "prisma": "^5.7.1",
     "tsx": "^4.7.0"
   }
 }

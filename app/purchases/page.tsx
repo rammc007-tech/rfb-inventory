@@ -2,11 +2,126 @@
 
 import { useState } from 'react'
 import DashboardLayout from '@/components/DashboardLayout'
-import { Plus, X, Printer, Filter, Edit, Trash2, Search, Calendar } from 'lucide-react'
+import { Plus, X, Printer, Filter, Edit, Trash2, Search, Calendar, BarChart3, ChevronDown, ChevronUp, Maximize2, Minimize2 } from 'lucide-react'
 import useSWR from 'swr'
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subWeeks, subMonths } from 'date-fns'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
+// Interactive Purchase Chart Component
+function PurchaseChartComponent({ items, materials }: { items: any[], materials: any }) {
+  const [isExpanded, setIsExpanded] = useState(true)
+  const [viewMode, setViewMode] = useState<'cost' | 'quantity' | 'count'>('cost')
+  const [maxItems, setMaxItems] = useState(10)
+
+  // Ensure materials is always an array
+  const materialsArray = Array.isArray(materials) ? materials : []
+
+  const sortedItems = [...items].sort((a, b) => {
+    if (viewMode === 'cost') return b.totalCost - a.totalCost
+    if (viewMode === 'quantity') return b.totalQty - a.totalQty
+    return b.count - a.count
+  }).slice(0, maxItems)
+
+  const maxValue = sortedItems[0] ? 
+    (viewMode === 'cost' ? sortedItems[0].totalCost : 
+     viewMode === 'quantity' ? sortedItems[0].totalQty : 
+     sortedItems[0].count) : 1
+
+  if (!isExpanded) {
+    return (
+      <div className="bg-white rounded-lg shadow p-4 no-print">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-primary-600" />
+            <h3 className="text-lg font-semibold text-gray-800">Purchase Analytics</h3>
+            <span className="text-sm text-gray-500">({items.length} items)</span>
+          </div>
+          <button
+            onClick={() => setIsExpanded(true)}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
+            <ChevronDown size={20} />
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow p-6 no-print">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <BarChart3 className="w-6 h-6 text-primary-600" />
+          <h3 className="text-lg font-semibold text-gray-800">Purchase Analytics</h3>
+        </div>
+        <div className="flex items-center gap-2">
+          <select
+            value={viewMode}
+            onChange={(e) => setViewMode(e.target.value as any)}
+            className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+          >
+            <option value="cost">By Cost</option>
+            <option value="quantity">By Quantity</option>
+            <option value="count">By Count</option>
+          </select>
+          <select
+            value={maxItems}
+            onChange={(e) => setMaxItems(Number(e.target.value))}
+            className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+          >
+            <option value={5}>Top 5</option>
+            <option value={10}>Top 10</option>
+            <option value={20}>Top 20</option>
+            <option value={items.length}>All</option>
+          </select>
+          <button
+            onClick={() => setIsExpanded(false)}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+            title="Collapse"
+          >
+            <ChevronUp size={20} />
+          </button>
+        </div>
+      </div>
+      <div className="space-y-3 max-h-96 overflow-y-auto">
+        {sortedItems.map((item, idx) => {
+          const value = viewMode === 'cost' ? item.totalCost : viewMode === 'quantity' ? item.totalQty : item.count
+          const percentage = (value / maxValue) * 100
+          const displayValue = viewMode === 'cost' ? `₹${value.toFixed(2)}` : 
+                              viewMode === 'quantity' ? `${value.toFixed(2)} ${Array.isArray(materialsArray) ? (materialsArray.find((m: any) => m.name === item.name)?.unit || '') : ''}` :
+                              `${value} purchase${value > 1 ? 's' : ''}`
+          return (
+            <div key={idx} className="space-y-1 p-2 hover:bg-gray-50 rounded-lg transition-colors">
+              <div className="flex justify-between items-center text-sm">
+                <span className="font-medium text-gray-700">{item.name}</span>
+                <span className="text-gray-600 font-semibold">{displayValue}</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-6 relative">
+                <div
+                  className={`h-6 rounded-full transition-all ${
+                    viewMode === 'cost' ? 'bg-primary-600' :
+                    viewMode === 'quantity' ? 'bg-blue-600' :
+                    'bg-green-600'
+                  }`}
+                  style={{ width: `${percentage}%` }}
+                />
+                <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-gray-700">
+                  {percentage.toFixed(1)}%
+                </span>
+              </div>
+              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <span>Qty: {item.totalQty.toFixed(2)} {Array.isArray(materialsArray) ? (materialsArray.find((m: any) => m.name === item.name)?.unit || '') : ''}</span>
+                <span>Purchases: {item.count}</span>
+                {viewMode === 'cost' && <span>Cost: ₹{item.totalCost.toFixed(2)}</span>}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 
 interface PurchaseItem {
   materialId: string
@@ -29,13 +144,17 @@ interface EditingPurchase {
 }
 
 export default function PurchasesPage() {
-  const { data: materials } = useSWR('/api/raw-materials', fetcher)
+  const { data: materialsData } = useSWR('/api/raw-materials', fetcher)
   const { data: purchases, mutate } = useSWR('/api/purchases', fetcher)
+  
+  // Ensure materials is always an array
+  const materials = Array.isArray(materialsData) ? materialsData : []
   const [showForm, setShowForm] = useState(false)
   const [purchaseItems, setPurchaseItems] = useState<PurchaseItem[]>([
     { materialId: '', quantity: '', unit: 'kg', unitPrice: '', totalCost: '', gasCylinderQty: '' },
   ])
   const [filterType, setFilterType] = useState<'all' | 'today' | 'week' | 'month'>('all')
+  const [materialTypeFilter, setMaterialTypeFilter] = useState<'all' | 'raw_material' | 'essential'>('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedDate, setSelectedDate] = useState('')
   const [editingPurchase, setEditingPurchase] = useState<EditingPurchase | null>(null)
@@ -48,8 +167,9 @@ export default function PurchasesPage() {
   }
 
   const isCylinder = (materialId: string) => {
-    const material = materials?.find((m: any) => m.id === materialId)
-    return material?.name.toLowerCase().includes('cylinder')
+    if (!Array.isArray(materials)) return false
+    const material = materials.find((m: any) => m.id === materialId)
+    return material?.name?.toLowerCase().includes('cylinder')
   }
 
   // Auto calculate unit price from bulk price
@@ -240,13 +360,37 @@ export default function PurchasesPage() {
     }
   }
 
-  const filteredPurchases = purchases?.filter((p: any) => {
+  // Ensure purchases is always an array
+  const purchasesList = Array.isArray(purchases) ? purchases : []
+
+  const filteredPurchases = purchasesList.filter((p: any) => {
+    // Safety check: ensure purchase has required fields
+    if (!p || !p.id || !p.rawMaterialName) {
+      return false
+    }
+
+    // Material type filter (Raw Material vs Essential)
+    if (materialTypeFilter !== 'all') {
+      const material = Array.isArray(materials) ? materials.find((m: any) => m.id === p.rawMaterialId) : null
+      if (materialTypeFilter === 'essential') {
+        if (!material || !material.isEssential) return false
+      } else if (materialTypeFilter === 'raw_material') {
+        if (!material || material.isEssential) return false
+      }
+    }
+
     // Search filter
-    const matchesSearch = p.rawMaterialName.toLowerCase().includes(searchTerm.toLowerCase())
+    const materialName = String(p.rawMaterialName || '').toLowerCase()
+    const searchLower = searchTerm.toLowerCase()
+    const matchesSearch = materialName.includes(searchLower)
     if (!matchesSearch) return false
 
     // Date filter
+    if (!p.purchaseDate) return true // Include if no date (shouldn't happen, but safety)
+    
     const purchaseDate = new Date(p.purchaseDate)
+    if (isNaN(purchaseDate.getTime())) return true // Invalid date, include it
+    
     const now = new Date()
     
     if (filterType === 'today') {
@@ -270,7 +414,7 @@ export default function PurchasesPage() {
     }
     
     return true
-  }) || []
+  })
 
   const totalCost = filteredPurchases.reduce((sum: number, p: any) => sum + p.totalCost, 0)
 
@@ -278,12 +422,33 @@ export default function PurchasesPage() {
     window.print()
   }
 
+  // Calculate most purchased items
+  const purchaseStats: Record<string, { name: string; totalQty: number; totalCost: number; count: number }> = {}
+  purchasesList.forEach((p: any) => {
+    if (!p.rawMaterialName) return
+    if (!purchaseStats[p.rawMaterialId]) {
+      purchaseStats[p.rawMaterialId] = {
+        name: p.rawMaterialName,
+        totalQty: 0,
+        totalCost: 0,
+        count: 0,
+      }
+    }
+    purchaseStats[p.rawMaterialId].totalQty += parseFloat(p.quantity) || 0
+    purchaseStats[p.rawMaterialId].totalCost += parseFloat(p.totalCost) || 0
+    purchaseStats[p.rawMaterialId].count += 1
+  })
+
+  const topPurchasedItems = Object.values(purchaseStats)
+    .sort((a, b) => b.totalCost - a.totalCost)
+    .slice(0, 10)
+
   return (
     <DashboardLayout>
       <div className="space-y-6 print:space-y-0">
         <div className="flex justify-between items-center no-print">
           <h2 className="text-2xl font-bold text-gray-800">Purchase Entry</h2>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-1">
               <Filter size={16} />
               <select
@@ -311,6 +476,18 @@ export default function PurchasesPage() {
                 }}
                 className="border-0 focus:ring-0 text-sm"
               />
+            </div>
+            <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-1 bg-white">
+              <label className="text-sm font-medium text-gray-700 whitespace-nowrap">Material Type:</label>
+              <select
+                value={materialTypeFilter}
+                onChange={(e) => setMaterialTypeFilter(e.target.value as 'all' | 'raw_material' | 'essential')}
+                className="border-0 focus:ring-0 text-sm"
+              >
+                <option value="all">All Materials</option>
+                <option value="raw_material">Raw Materials</option>
+                <option value="essential">Essential Items</option>
+              </select>
             </div>
             {filteredPurchases.length > 0 && (
               <button
@@ -359,6 +536,27 @@ export default function PurchasesPage() {
                         </option>
                       ))}
                     </select>
+                    {item.materialId && (() => {
+                      const material = Array.isArray(materials) ? materials.find((m: any) => m.id === item.materialId) : null
+                      const currentStock = material?.currentStock || 0
+                      const lowStockLimit = 10 // Default low stock limit
+                      const isLowStock = currentStock < lowStockLimit
+                      return (
+                        <div className={`mt-2 p-2 rounded-lg text-xs ${isLowStock ? 'bg-orange-50 border border-orange-200' : 'bg-green-50 border border-green-200'}`}>
+                          <p className={`font-semibold ${isLowStock ? 'text-orange-800' : 'text-green-800'}`}>
+                            Current Stock: {currentStock.toFixed(2)} {material?.unit || ''}
+                          </p>
+                          <p className="text-gray-600 mt-1">
+                            Low Stock Alert Limit: {lowStockLimit} {material?.unit || ''}
+                          </p>
+                          {isLowStock && (
+                            <p className="text-orange-700 font-semibold mt-1">
+                              ⚠️ Low Stock - Please restock!
+                            </p>
+                          )}
+                        </div>
+                      )
+                    })()}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -585,7 +783,7 @@ export default function PurchasesPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                 />
               </div>
-              {editingPurchase.rawMaterialId && materials?.find((m: any) => m.id === editingPurchase.rawMaterialId)?.name.toLowerCase().includes('cylinder') && (
+              {editingPurchase.rawMaterialId && Array.isArray(materials) && materials.find((m: any) => m.id === editingPurchase.rawMaterialId)?.name?.toLowerCase().includes('cylinder') && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Gas Cylinder Qty (kg)
@@ -656,6 +854,11 @@ export default function PurchasesPage() {
               . Total: ₹{totalCost.toFixed(2)}
             </p>
           </div>
+        )}
+
+        {/* Purchase Chart - Interactive */}
+        {topPurchasedItems.length > 0 && Array.isArray(materials) && (
+          <PurchaseChartComponent items={topPurchasedItems} materials={materials} />
         )}
 
         <div className="bg-white rounded-lg shadow overflow-hidden print:shadow-none">

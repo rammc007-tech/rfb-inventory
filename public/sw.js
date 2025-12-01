@@ -1,32 +1,8 @@
 const CACHE_NAME = 'rfb-inventory-v1'
-const urlsToCache = [
-  '/',
-  '/dashboard',
-  '/raw-materials',
-  '/purchases',
-  '/recipes',
-  '/production',
-  '/reports',
-  '/settings',
-]
 
 // Install service worker
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache)
-    })
-  )
-})
-
-// Fetch event - serve from cache when offline
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Return cached version or fetch from network
-      return response || fetch(event.request)
-    })
-  )
+  self.skipWaiting()
 })
 
 // Activate - clean up old caches
@@ -38,6 +14,35 @@ self.addEventListener('activate', (event) => {
           .filter((cacheName) => cacheName !== CACHE_NAME)
           .map((cacheName) => caches.delete(cacheName))
       )
+    }).then(() => {
+      return self.clients.claim()
+    })
+  )
+})
+
+// Fetch event - serve from network, cache for offline
+self.addEventListener('fetch', (event) => {
+  // Skip API routes and non-GET requests
+  if (event.request.url.includes('/api/') || event.request.method !== 'GET') {
+    return
+  }
+
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        // Clone the response
+        const responseToCache = response.clone()
+        // Cache successful responses
+        if (response.status === 200) {
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache)
+          })
+        }
+        return response
+      })
+      .catch(() => {
+        // If network fails, try cache
+        return caches.match(event.request)
     })
   )
 })

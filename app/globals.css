@@ -32,6 +32,38 @@ body {
   }
 }
 
+/* Mobile and Tablet Responsive Utilities */
+@media (max-width: 640px) {
+  .mobile-hidden {
+    display: none !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-hidden {
+    display: none !important;
+  }
+}
+
+/* Login page animations */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Touch-friendly buttons on mobile */
+@media (max-width: 768px) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
 @media print {
   /* Hide all non-print elements */
   .no-print {
@@ -164,9 +196,50 @@ body {
   .print-medium {
     font-size: 12px !important;
   }
+  
+  /* Production Logs Print Styling */
+  .print\:break-inside-avoid {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  .print\:page-break-inside-avoid {
+    page-break-inside: avoid !important;
+  }
+  
+  /* Ensure tables don't break across pages */
+  table {
+    page-break-inside: auto !important;
+  }
+  
+  tr {
+    page-break-inside: avoid !important;
+    page-break-after: auto !important;
+  }
+  
+  thead {
+    display: table-header-group !important;
+  }
+  
+  tfoot {
+    display: table-footer-group !important;
+  }
 
   .print-large {
     font-size: 14px !important;
+  }
+  
+  /* Ensure all numbers and text are visible in print */
+  * {
+    color: #000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Ensure font sizes are maintained */
+  span, p, div, td, th {
+    font-size: inherit !important;
+    color: #000 !important;
   }
   
   /* Remove all spacing and gaps */

@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 interface User {
   id: string
   username: string
-  role: 'admin' | 'user'
+  role: 'admin' | 'supervisor' | 'user'
 }
 
 interface AuthContextType {
@@ -23,11 +23,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null)
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('rfb_token')
-    const storedUser = localStorage.getItem('rfb_user')
-    if (storedToken && storedUser) {
-      setToken(storedToken)
-      setUser(JSON.parse(storedUser))
+    // Only run on client side
+    if (typeof window === 'undefined') return
+    
+    try {
+      const storedToken = localStorage.getItem('rfb_token')
+      const storedUser = localStorage.getItem('rfb_user')
+      if (storedToken && storedUser) {
+        setToken(storedToken)
+        setUser(JSON.parse(storedUser))
+      }
+    } catch (error) {
+      console.error('Error loading auth from localStorage:', error)
     }
   }, [])
 
@@ -44,10 +51,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error(data.error || 'Login failed')
     }
 
-    setToken(data.token)
-    setUser(data.user)
-    localStorage.setItem('rfb_token', data.token)
-    localStorage.setItem('rfb_user', JSON.stringify(data.user))
+    // Update state and localStorage synchronously
+    const token = data.token
+    const user = data.user
+    
+    localStorage.setItem('rfb_token', token)
+    localStorage.setItem('rfb_user', JSON.stringify(user))
+    
+    // Update state after localStorage to ensure consistency
+    setToken(token)
+    setUser(user)
+    
+    console.log('Auth state updated:', { hasToken: !!token, hasUser: !!user })
   }
 
   const logout = () => {

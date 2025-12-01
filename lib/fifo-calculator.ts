@@ -56,8 +56,17 @@ export async function calculateProductionCost(
 
   // Calculate for each ingredient
   for (const ingredient of recipe.ingredients) {
+    if (!ingredient.rawMaterialId) {
+      console.error('Ingredient missing rawMaterialId:', ingredient)
+      continue
+    }
+
     const requiredQty = ingredient.quantity * batches
     const requiredUnit = ingredient.unit as Unit
+
+    // Get raw material name safely
+    const rawMaterial = ingredient.rawMaterial || (ingredient as any).rawMaterialData
+    const materialName = rawMaterial?.name || (rawMaterial as any)?.data?.name || 'Unknown Material'
 
     // Get all purchase batches for this material, ordered by date (FIFO)
     const purchaseBatches = await prisma.purchaseBatch.findMany({
@@ -83,7 +92,7 @@ export async function calculateProductionCost(
     if (totalAvailable < requiredQty) {
       missingMaterials.push({
         materialId: ingredient.rawMaterialId,
-        materialName: ingredient.rawMaterial.name,
+        materialName: materialName,
         required: requiredQty,
         available: totalAvailable,
         unit: requiredUnit,
@@ -129,7 +138,7 @@ export async function calculateProductionCost(
 
     breakdown.push({
       materialId: ingredient.rawMaterialId,
-      materialName: ingredient.rawMaterial.name,
+      materialName: materialName,
       quantity: requiredQty,
       unit: requiredUnit,
       cost: ingredientCost,
@@ -171,6 +180,11 @@ export async function deductStock(
 
   // Deduct for each ingredient
   for (const ingredient of recipe.ingredients) {
+    if (!ingredient.rawMaterialId) {
+      console.error('Ingredient missing rawMaterialId:', ingredient)
+      continue
+    }
+
     const requiredQty = ingredient.quantity * batches
     const requiredUnit = ingredient.unit as Unit
 

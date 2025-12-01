@@ -79,16 +79,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Clear existing data (be careful in production!)
-    await prisma.productionLog.deleteMany()
-    await prisma.purchaseBatch.deleteMany()
-    await prisma.recipeIngredient.deleteMany()
-    await prisma.recipe.deleteMany()
-    await prisma.rawMaterial.deleteMany()
+    prisma.productionLog.deleteMany({ where: {} })
+    prisma.purchaseBatch.deleteMany({ where: {} })
+    prisma.recipeIngredient.deleteMany({ where: {} })
+    prisma.recipe.deleteMany({ where: {} })
+    prisma.rawMaterial.deleteMany({ where: {} })
 
     // Restore data
     if (backupData.materials) {
       for (const material of backupData.materials) {
-        await prisma.rawMaterial.create({
+        prisma.rawMaterial.create({
           data: {
             name: material.name,
             unit: material.unit,

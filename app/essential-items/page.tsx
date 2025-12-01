@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import DashboardLayout from '@/components/DashboardLayout'
-import { Star, Package, Search, Filter, Plus, ShoppingCart } from 'lucide-react'
+import { Star, Package, Search, Filter, Plus, ShoppingCart, Edit, Trash2, Printer } from 'lucide-react'
 import useSWR from 'swr'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
@@ -15,6 +15,7 @@ export default function EssentialItemsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [filterType, setFilterType] = useState<'all' | 'low-stock' | 'out-of-stock' | 'in-stock'>('all')
   const [showPurchaseForm, setShowPurchaseForm] = useState(false)
+  const [editingMaterial, setEditingMaterial] = useState<any>(null)
   const [selectedMaterial, setSelectedMaterial] = useState<string>('')
   const [purchaseData, setPurchaseData] = useState({
     quantity: '',
@@ -24,9 +25,12 @@ export default function EssentialItemsPage() {
     gasCylinderQty: '',
   })
 
-  const essentialMaterials = materials?.filter((m: any) => m.isEssential) || []
+  const essentialMaterials = Array.isArray(materials) ? materials.filter((m: any) => m && m.isEssential) : []
 
   const filteredMaterials = essentialMaterials.filter((material: any) => {
+    // Safety check
+    if (!material || !material.name) return false
+    
     // Search filter
     const matchesSearch = material.name.toLowerCase().includes(searchTerm.toLowerCase())
     if (!matchesSearch) return false
@@ -44,9 +48,11 @@ export default function EssentialItemsPage() {
   })
 
   // Get recent purchases for essential items
-  const recentPurchases = purchases?.filter((p: any) => {
-    return essentialMaterials.some((m: any) => m.id === p.rawMaterialId)
-  }) || []
+  const recentPurchases = Array.isArray(purchases) 
+    ? purchases.filter((p: any) => {
+        return essentialMaterials.some((m: any) => m.id === p.rawMaterialId)
+      })
+    : []
 
   const handleMarkEssential = async (materialId: string, isEssential: boolean) => {
     try {
@@ -66,21 +72,74 @@ export default function EssentialItemsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const res = await fetch('/api/raw-materials', {
-        method: 'POST',
+      if (editingMaterial) {
+        // Update existing material
+        const res = await fetch(`/api/raw-materials/${editingMaterial.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...formData, isEssential: true }),
+        })
+        if (res.ok) {
+          mutate()
+          setFormData({ name: '', unit: 'kg' })
+          setShowForm(false)
+          setEditingMaterial(null)
+          alert('Essential item updated successfully!')
+        } else {
+          const error = await res.json()
+          alert(error.error || 'Failed to update essential item')
+        }
+      } else {
+        // Create new material
+        const res = await fetch('/api/raw-materials', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...formData, isEssential: true }),
+        })
+        if (res.ok) {
+          mutate()
+          setFormData({ name: '', unit: 'kg' })
+          setShowForm(false)
+        } else {
+          const error = await res.json()
+          alert(error.error || 'Failed to create essential item')
+        }
+      }
+    } catch (error) {
+      alert('Failed to save essential item')
+    }
+  }
+
+  const handleEditMaterial = (material: any) => {
+    setEditingMaterial(material)
+    setFormData({
+      name: material.name || '',
+      unit: material.unit || 'kg',
+    })
+    setShowForm(true)
+  }
+
+  const handleDeleteMaterial = async (id: string) => {
+    if (!confirm('Are you sure you want to remove this item from essential items? The material will still exist but won\'t be marked as essential.')) {
+      return
+    }
+
+    try {
+      // Just remove essential flag instead of deleting
+      const res = await fetch(`/api/raw-materials/${id}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, isEssential: true }),
+        body: JSON.stringify({ isEssential: false }),
       })
       if (res.ok) {
         mutate()
-        setFormData({ name: '', unit: 'kg' })
-        setShowForm(false)
+        alert('Item removed from essential items successfully!')
       } else {
         const error = await res.json()
-        alert(error.error || 'Failed to create essential item')
+        alert(error.error || 'Failed to remove from essential items')
       }
     } catch (error) {
-      alert('Failed to create essential item')
+      alert('Failed to remove from essential items')
     }
   }
 
@@ -147,15 +206,22 @@ export default function EssentialItemsPage() {
           </div>
           <div className="flex gap-2">
             <button
+              onClick={() => window.print()}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 no-print"
+            >
+              <Printer size={18} />
+              Print
+            </button>
+            <button
               onClick={() => setShowPurchaseForm(!showPurchaseForm)}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 no-print"
             >
               <ShoppingCart size={20} />
               Purchase Essential Item
             </button>
             <button
               onClick={() => setShowForm(!showForm)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 no-print"
             >
               <Package size={20} />
               Add Essential Item
@@ -332,7 +398,9 @@ export default function EssentialItemsPage() {
         {/* Add Item Form */}
         {showForm && (
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold mb-4">Add Essential Item</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              {editingMaterial ? 'Edit Essential Item' : 'Add Essential Item'}
+            </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -381,6 +449,7 @@ export default function EssentialItemsPage() {
                   onClick={() => {
                     setShowForm(false)
                     setFormData({ name: '', unit: 'kg' })
+                    setEditingMaterial(null)
                   }}
                   className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
                 >
@@ -392,7 +461,13 @@ export default function EssentialItemsPage() {
         )}
 
         {/* Essential Items List */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white rounded-lg shadow overflow-hidden print:shadow-none">
+          <div className="hidden print:block text-center py-3 print:py-2 print:mb-2 border-b print:border-gray-300">
+            <p className="text-sm text-gray-600 print:text-xs">Essential Items Report</p>
+            <p className="text-xs text-gray-500 print:mt-1">
+              Date: {new Date().toLocaleDateString()}
+            </p>
+          </div>
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -444,22 +519,39 @@ export default function EssentialItemsPage() {
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <button
-                      onClick={() => {
-                        setSelectedMaterial(material.id)
-                        const materialObj = materials?.find((m: any) => m.id === material.id)
-                        if (materialObj) {
-                          setPurchaseData({
-                            ...purchaseData,
-                            unit: materialObj.unit,
-                          })
-                        }
-                        setShowPurchaseForm(true)
-                      }}
-                      className="px-3 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200"
-                    >
-                      Purchase
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setSelectedMaterial(material.id)
+                          const materialObj = materials?.find((m: any) => m.id === material.id)
+                          if (materialObj) {
+                            setPurchaseData({
+                              ...purchaseData,
+                              unit: materialObj.unit,
+                            })
+                          }
+                          setShowPurchaseForm(true)
+                        }}
+                        className="px-3 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 text-xs"
+                        title="Purchase"
+                      >
+                        Purchase
+                      </button>
+                      <button
+                        onClick={() => handleEditMaterial(material)}
+                        className="text-blue-600 hover:text-blue-800"
+                        title="Edit Item"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMaterial(material.id)}
+                        className="text-red-600 hover:text-red-800"
+                        title="Remove from Essential"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -19,17 +19,18 @@ export async function PUT(
       updateData.password = await bcrypt.hash(password, 10)
     }
 
-    const user = await prisma.user.update({
+    const updatedUser: any = prisma.user.update({
       where: { id: params.id },
       data: updateData,
-      select: {
-        id: true,
-        username: true,
-        role: true,
-        isActive: true,
-        updatedAt: true,
-      },
     })
+
+    const user = {
+      id: updatedUser.id,
+      username: updatedUser.username,
+      role: updatedUser.role,
+      isActive: updatedUser.isActive,
+      updatedAt: updatedUser.updatedAt,
+    }
 
     return NextResponse.json(user)
   } catch (error) {
@@ -47,7 +48,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    await prisma.user.delete({
+    prisma.user.delete({
       where: { id: params.id },
     })
 

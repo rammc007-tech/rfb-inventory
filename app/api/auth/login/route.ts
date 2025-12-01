@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma, reloadDatabase } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
@@ -30,13 +30,52 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    let user
+    // Reload database to ensure fresh data
+    reloadDatabase()
+    
+    let user: any = null
     try {
       console.log('Querying database for user:', username)
-      user = await prisma.user.findUnique({
-        where: { username },
+      // Use findMany and filter for more reliable lookup
+      const allUsers = prisma.user.findMany({})
+      const usersArray = Array.isArray(allUsers) ? allUsers : []
+      
+      console.log('Total users in database:', usersArray.length)
+      console.log('All usernames:', usersArray.map((u: any) => u.username))
+      
+      // Case-insensitive username matching
+      // Handle both flat structure and nested data structure
+      user = usersArray.find((u: any) => {
+        // Check if user has nested data structure
+        const userObj = u.data || u
+        const dbUsername = (userObj.username || u.username || '').trim().toLowerCase()
+        const searchUsername = username.trim().toLowerCase()
+        return dbUsername === searchUsername
       })
+      
+      // If user found with nested structure, flatten it
+      if (user && user.data) {
+        user = {
+          ...user.data,
+          id: user.id,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt
+        }
+      }
+      
       console.log('User found:', user ? 'Yes' : 'No')
+      if (user) {
+        console.log('User details:', { 
+          id: user.id, 
+          username: user.username, 
+          role: user.role, 
+          isActive: user.isActive,
+          hasPassword: !!user.password,
+          passwordLength: user.password ? user.password.length : 0
+        })
+      } else {
+        console.log('User not found. Available users:', usersArray.map((u: any) => u.username))
+      }
     } catch (dbError: any) {
       console.error('Database error:', dbError)
       console.error('Error details:', dbError.message, dbError.stack)
@@ -65,10 +104,37 @@ export async function POST(request: NextRequest) {
     let isValid = false
     try {
       console.log('Comparing password...')
+      console.log('Input password length:', password.length)
+      console.log('Stored password hash:', user.password ? user.password.substring(0, 30) + '...' : 'MISSING')
+      console.log('Stored password hash length:', user.password ? user.password.length : 0)
+      
+      if (!user.password) {
+        console.error('❌ User password is missing!')
+        return NextResponse.json(
+          { error: 'Invalid username or password' },
+          { status: 401 }
+        )
+      }
+      
+      // Check if password is already hashed (starts with $2a$ or $2b$)
+      if (user.password.startsWith('$2a$') || user.password.startsWith('$2b$')) {
       isValid = await bcrypt.compare(password, user.password)
-      console.log('Password match:', isValid)
+        console.log('Password match (bcrypt):', isValid)
+      } else {
+        // If password is not hashed, compare directly (for backward compatibility)
+        console.warn('⚠️ Password is not hashed! Comparing directly.')
+        isValid = password === user.password
+        console.log('Password match (direct):', isValid)
+      }
+      
+      if (!isValid) {
+        console.log('❌ Password does not match')
+        console.log('Attempted password:', password)
+        console.log('Stored password hash:', user.password.substring(0, 50))
+      }
     } catch (error: any) {
-      console.error('Password comparison error:', error)
+      console.error('❌ Password comparison error:', error)
+      console.error('Error details:', error.message, error.stack)
       return NextResponse.json(
         { error: 'Authentication error. Please try again.' },
         { status: 500 }

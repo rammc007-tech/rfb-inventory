@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import DashboardLayout from '@/components/DashboardLayout'
-import { Calculator } from 'lucide-react'
+import { Calculator, Printer, Factory } from 'lucide-react'
 import useSWR from 'swr'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
@@ -11,23 +11,51 @@ export default function CostCalculatorPage() {
   const { data: recipes } = useSWR('/api/recipes', fetcher)
   const [selectedRecipeId, setSelectedRecipeId] = useState('')
   const [batches, setBatches] = useState(1)
+  const [desiredOutputQty, setDesiredOutputQty] = useState('')
+  const [useDesiredQty, setUseDesiredQty] = useState(false)
   const [utilityCost, setUtilityCost] = useState('')
   const [staffSalary, setStaffSalary] = useState('')
   const [loading, setLoading] = useState(false)
   const [costCalculation, setCostCalculation] = useState<any>(null)
 
   const calculateCost = async () => {
-    if (!selectedRecipeId || batches < 1) {
-      alert('Please select a recipe and enter number of batches')
+    if (!selectedRecipeId) {
+      alert('Please select a recipe')
       return
+    }
+
+    if (useDesiredQty) {
+      if (!desiredOutputQty || parseFloat(desiredOutputQty) < 0) {
+        alert('Please enter a valid desired output quantity (0 or greater)')
+        return
+      }
+    } else {
+      if (batches < 1) {
+        alert('Please enter number of batches (1 or greater)')
+        return
+      }
     }
 
     setLoading(true)
     try {
+      const selectedRecipe = recipes?.find((r: any) => r.id === selectedRecipeId)
+      let calculatedBatches = batches
+      let outputQty = selectedRecipe?.outputQty * batches
+
+      if (useDesiredQty && selectedRecipe && desiredOutputQty) {
+        const desiredQty = parseFloat(desiredOutputQty)
+        calculatedBatches = desiredQty / selectedRecipe.outputQty
+        outputQty = desiredQty
+      }
+
       const res = await fetch('/api/production/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ recipeId: selectedRecipeId, batches }),
+        body: JSON.stringify({ 
+          recipeId: selectedRecipeId, 
+          batches: calculatedBatches,
+          desiredOutputQty: useDesiredQty ? parseFloat(desiredOutputQty) : null,
+        }),
       })
 
       if (res.ok) {
@@ -46,6 +74,12 @@ export default function CostCalculatorPage() {
           staffSalary: staff,
           additionalCosts: additionalCosts,
           totalWithAdditional: totalWithAdditional,
+          outputQty: outputQty,
+          outputUnit: selectedRecipe?.outputUnit || 'pieces',
+          useDesiredQty: useDesiredQty,
+          desiredOutputQty: useDesiredQty ? parseFloat(desiredOutputQty) : null,
+          calculatedBatches: calculatedBatches,
+          batches: batches,
         })
       } else {
         const error = await res.json()
@@ -62,20 +96,101 @@ export default function CostCalculatorPage() {
 
   const selectedRecipe = recipes?.find((r: any) => r.id === selectedRecipeId)
   const costPerUnit = costCalculation && selectedRecipe
-    ? costCalculation.totalWithAdditional / (selectedRecipe.outputQty * batches)
+    ? costCalculation.totalWithAdditional / (costCalculation.outputQty || (selectedRecipe.outputQty * batches) || 1)
     : 0
+
+  const handlePrint = () => {
+    window.print()
+  }
+
+  const handleProduce = async () => {
+    if (!selectedRecipeId || !costCalculation) {
+      alert('Please calculate cost first')
+      return
+    }
+
+    if (!costCalculation.canProduce) {
+      alert('Cannot produce: Insufficient stock')
+      return
+    }
+
+    const selectedRecipe = recipes?.find((r: any) => r.id === selectedRecipeId)
+    if (!selectedRecipe) {
+      alert('Recipe not found')
+      return
+    }
+
+    const confirmMessage = costCalculation.useDesiredQty
+      ? `Produce ${costCalculation.desiredOutputQty} ${costCalculation.outputUnit} of ${selectedRecipe.name}? This will deduct stock from inventory.`
+      : `Produce ${costCalculation.batches} batch(es) of ${selectedRecipe.name}? This will deduct stock from inventory.`
+
+    if (!confirm(confirmMessage)) {
+      return
+    }
+
+    setLoading(true)
+    try {
+      const res = await fetch('/api/production', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recipeId: selectedRecipeId,
+          batches: costCalculation.useDesiredQty 
+            ? costCalculation.calculatedBatches 
+            : costCalculation.batches,
+          baseRecipeCost: costCalculation.totalCost,
+          utilityCost: costCalculation.utilityCost || 0,
+          staffSalary: costCalculation.staffSalary || 0,
+          desiredOutputQty: costCalculation.useDesiredQty ? costCalculation.desiredOutputQty : null,
+          desiredOutputUnit: costCalculation.useDesiredQty ? costCalculation.outputUnit : null,
+        }),
+      })
+
+      if (res.ok) {
+        alert(`Production logged successfully for ${selectedRecipe.name}!`)
+        // Reset form
+        setCostCalculation(null)
+        setDesiredOutputQty('')
+        setUseDesiredQty(false)
+        setBatches(1)
+        setUtilityCost('')
+        setStaffSalary('')
+      } else {
+        const error = await res.json()
+        alert(error.error || 'Failed to produce')
+      }
+    } catch (error) {
+      alert('Failed to produce')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 print:space-y-0">
+        <div className="flex items-center justify-between no-print">
         <div className="flex items-center gap-3">
           <Calculator className="w-8 h-8 text-primary-600" />
           <h2 className="text-2xl font-bold text-gray-800">Production Cost Calculator</h2>
+          </div>
+          {costCalculation && (
+            <button
+              onClick={handlePrint}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+            >
+              <Printer size={18} />
+              Print
+            </button>
+          )}
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold mb-4">Calculate Production Cost</h3>
-          <div className="space-y-4">
+        <div className="bg-white rounded-lg shadow p-6 print:shadow-none">
+          <div className="hidden print:block text-center py-3 print:py-2 print:mb-2">
+            <p className="text-sm text-gray-600 print:text-xs">Production Cost Calculator</p>
+          </div>
+          <h3 className="text-lg font-semibold mb-4 no-print">Calculate Production Cost</h3>
+          <div className="space-y-4 no-print">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Select Recipe
@@ -118,26 +233,86 @@ export default function CostCalculatorPage() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Number of Batches
-                </label>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
                 <input
-                  type="number"
-                  min="1"
-                  value={batches}
+                  type="checkbox"
+                  id="useDesiredQty"
+                  checked={useDesiredQty}
                   onChange={(e) => {
-                    setBatches(parseInt(e.target.value) || 1)
+                    setUseDesiredQty(e.target.checked)
                     setCostCalculation(null)
+                    if (!e.target.checked) {
+                      setDesiredOutputQty('')
+                    }
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                 />
+                <label htmlFor="useDesiredQty" className="text-sm font-medium text-gray-700">
+                  Use Desired Output Quantity (Optional)
+                </label>
               </div>
+
+              {useDesiredQty ? (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Desired Output Quantity
+                    <span className="text-xs text-gray-500 ml-1">(Any quantity - e.g., 0.5kg, 0.3kg, 1.2kg)</span>
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={desiredOutputQty}
+                      onChange={(e) => {
+                        setDesiredOutputQty(e.target.value)
+                        setCostCalculation(null)
+                      }}
+                      placeholder={`e.g., 0, 0.5, 1.2, 10`}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                    />
+                    <span className="text-sm text-gray-600">
+                      {selectedRecipe?.outputUnit || 'pieces'}
+                    </span>
+                  </div>
+                  {selectedRecipe && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Standard: {selectedRecipe.outputQty} {selectedRecipe.outputUnit} per batch. 
+                      You can enter any quantity (e.g., 0, 0.5, {selectedRecipe.outputQty * 0.3}, {selectedRecipe.outputQty * 1.2}) and the cost will be calculated proportionally.
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Number of Batches
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={batches}
+                    onChange={(e) => {
+                      setBatches(parseInt(e.target.value) || 1)
+                      setCostCalculation(null)
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  />
+                  {selectedRecipe && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Standard output: {selectedRecipe.outputQty} {selectedRecipe.outputUnit} per batch
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="border-t pt-4">
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">Utility Costs (Optional)</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Utility Cost (₹)
-                  <span className="text-xs text-gray-500 ml-1">(Optional)</span>
+                    Electric Unit Cost (₹)
                 </label>
                 <input
                   type="number"
@@ -153,8 +328,7 @@ export default function CostCalculatorPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Staff Salary (₹)
-                  <span className="text-xs text-gray-500 ml-1">(Optional)</span>
+                    Gas Cost (₹)
                 </label>
                 <input
                   type="number"
@@ -167,6 +341,18 @@ export default function CostCalculatorPage() {
                   placeholder="e.g., 200"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                 />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Other Utility Cost (₹)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="e.g., 100"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
               </div>
             </div>
 
@@ -181,12 +367,12 @@ export default function CostCalculatorPage() {
         </div>
 
         {costCalculation && (
-          <div className="bg-white rounded-lg shadow-lg border-2 border-green-500 p-6">
+          <div className="bg-white rounded-lg shadow-lg border-2 border-green-500 p-6 print:shadow-none print:border print:border-gray-300">
             <div className="mb-4 pb-4 border-b">
               <h3 className="text-xl font-bold text-gray-800 mb-2">
-                💰 Production Cost Breakdown
+                <span className="no-print">💰 </span>Production Cost Breakdown
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 no-print">
                 Complete cost calculation including utilities and staff
               </p>
             </div>
@@ -216,9 +402,23 @@ export default function CostCalculatorPage() {
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Batches:</p>
-                      <p className="text-lg font-semibold text-gray-800">{batches}</p>
+                      <p className="text-sm text-gray-600">
+                        {costCalculation.useDesiredQty ? 'Output Quantity:' : 'Batches:'}
+                      </p>
+                      <p className="text-lg font-semibold text-gray-800">
+                        {costCalculation.useDesiredQty 
+                          ? `${costCalculation.desiredOutputQty} ${costCalculation.outputUnit}`
+                          : costCalculation.batches}
+                      </p>
                     </div>
+                    {costCalculation.useDesiredQty && (
+                      <div>
+                        <p className="text-sm text-gray-600">Calculated Batches:</p>
+                        <p className="text-lg font-semibold text-gray-800">
+                          {costCalculation.calculatedBatches?.toFixed(3) || '0'}
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -254,12 +454,22 @@ export default function CostCalculatorPage() {
                       </div>
                       <div className="flex justify-between pt-2">
                         <span className="text-sm text-gray-600">
-                          Cost per {selectedRecipe?.outputUnit}:
+                          Cost per {costCalculation.outputUnit || selectedRecipe?.outputUnit}:
                         </span>
                         <span className="text-sm font-semibold text-green-600">
                           ₹{costPerUnit.toFixed(2)}
                         </span>
                       </div>
+                      {costCalculation.useDesiredQty && (
+                        <div className="flex justify-between pt-2 border-t border-green-300">
+                          <span className="text-sm font-medium text-gray-700">
+                            Total Output Quantity:
+                          </span>
+                          <span className="text-sm font-semibold text-blue-600">
+                            {costCalculation.desiredOutputQty} {costCalculation.outputUnit}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -310,6 +520,22 @@ export default function CostCalculatorPage() {
                         </tr>
                       </tfoot>
                     </table>
+                  </div>
+
+                  <div className="mt-6 pt-4 border-t border-gray-200 no-print">
+                    <button
+                      onClick={handleProduce}
+                      disabled={loading || !costCalculation.canProduce}
+                      className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed font-semibold flex items-center justify-center gap-2"
+                    >
+                      <Factory size={20} />
+                      {loading ? 'Producing...' : 'Produce & Add to Production'}
+                    </button>
+                    {!costCalculation.canProduce && (
+                      <p className="text-xs text-red-600 mt-2 text-center">
+                        Cannot produce: Insufficient stock available
+                      </p>
+                    )}
                   </div>
                 </div>
               </>
