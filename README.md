@@ -1,108 +1,247 @@
 # RFB Inventory Management System
 
-RISHA FOODS AND BAKERY - Inventory Management System with FIFO Cost Calculation
+**RISHA FOODS AND BAKERY** - Professional Inventory Management System
 
-## Features
+## 🎯 Features
 
-- **Raw Material Management**: Track raw materials with units (kg, g, liter, ml, pieces)
-- **Purchase Entry**: Record purchases with rates and quantities
-- **Recipe Creation**: Build recipes with ingredients and quantities
-- **Automatic FIFO Cost Calculation**: Production costs calculated using First-In-First-Out method
-- **Daily Production Planning**: Plan and execute daily production
-- **Automatic Stock Deduction**: Stock automatically deducted from FIFO batches
-- **Unit Conversion**: Automatic conversion between compatible units (kg↔g, L↔ml)
-- **Cost Reporting**: Detailed cost breakdowns and reports
-- **Essential Items**: Separate tracking for essential items
-- **Production Variants**: Support for recipe variations
-- **PWA Support**: Works offline and can be installed
+- ✅ Raw Materials Management
+- ✅ Essential Items Tracking
+- ✅ Purchase Entry & Analytics
+- ✅ Recipe Management with Cost Calculation
+- ✅ Production Tracking
+- ✅ Cost Reports & Analytics
+- ✅ User Management (Admin, Supervisor, User roles)
+- ✅ PWA Support (Installable App)
+- ✅ Responsive Design (Mobile, Tablet, Desktop)
+- ✅ Print Functionality
+- ✅ Data Backup & Restore
+- ✅ Deleted Items Recovery
 
-## Technology Stack
+## 🚀 Quick Start
 
-- Next.js 14
-- TypeScript
-- Prisma ORM
-- PostgreSQL Database (for production)
-- Tailwind CSS
-- SWR for data fetching
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
 
-## Quick Start
+### Installation
 
-1. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
+```bash
+# Clone repository
+git clone <repository-url>
+cd "RFB inventory"
 
-2. **Setup Database**:
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
+# Install dependencies
+npm install
 
-3. **Run Development Server**:
-   ```bash
-   npm run dev
-   ```
+# Create admin user
+npm run create-admin
 
-4. **Open in Browser**:
-   Navigate to `http://localhost:3001`
+# Seed sample data (optional)
+npm run seed-data
 
-## Deployment
+# Start development server
+npm run dev
+```
 
-See `DEPLOY_NOW.md` for detailed deployment instructions to Netlify.
+Visit: `http://localhost:3001`
 
-## Default Login
-
+**Default Login:**
 - Username: `admin`
 - Password: `admin123`
 
-**⚠️ Change default password after first login!**
+## 📋 Available Scripts
 
-## Database Schema
+```bash
+npm run dev          # Start development server
+npm run dev:clean    # Clean cache and start dev server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Check code quality
+npm run pre-deploy   # Run pre-deployment checks
+npm run clean        # Clean cache
+npm run reset        # Full reset (reinstall dependencies)
+```
 
-- **RawMaterial**: Raw materials with units
-- **PurchaseBatch**: Purchase entries with FIFO tracking
-- **Recipe**: Recipe definitions
-- **RecipeIngredient**: Recipe ingredients with quantities
-- **ProductionLog**: Production logs with cost calculations
-- **User**: User accounts
-- **ShopSettings**: Shop settings and preferences
+## 🏗️ Project Structure
 
-## Key Features Explained
+```
+RFB inventory/
+├── app/                    # Next.js 14 App Router
+│   ├── api/               # API routes
+│   ├── dashboard/         # Dashboard page
+│   ├── raw-materials/     # Raw materials page
+│   ├── recipes/           # Recipes page
+│   └── ...
+├── components/            # React components
+│   ├── DashboardLayout.tsx
+│   ├── InstallPWA.tsx
+│   └── ...
+├── contexts/              # React contexts
+│   └── AuthContext.tsx
+├── lib/                   # Utilities
+│   ├── database.ts        # Database operations
+│   ├── auth.ts           # Authentication
+│   └── ...
+├── public/               # Static files
+│   ├── manifest.json     # PWA manifest
+│   └── sw.js            # Service worker
+├── scripts/              # Utility scripts
+└── database/            # JSON database
+```
 
-### FIFO Cost Calculation
-The system uses First-In-First-Out method to calculate production costs:
-- Oldest purchase batches are used first
-- Automatic unit conversion when needed
-- Accurate cost tracking per ingredient
+## 🔧 Configuration
 
-### Unit Conversion
-Automatic conversion between:
-- 1 kg = 1000 g
-- 1 liter = 1000 ml
-- Pieces cannot be converted
+### Environment Variables
 
-### Production Workflow
-1. Select recipe and number of batches
-2. System calculates cost using FIFO
-3. Shows cost breakdown per ingredient
-4. On confirmation, deducts stock from oldest batches first
-5. Creates production log with all details
+Create `.env.local`:
 
-## API Endpoints
+```env
+NODE_ENV=development
+DATABASE_URL=file:./database/rfb-inventory.json
+JWT_SECRET=your-secret-key-change-in-production
+```
 
-- `GET /api/raw-materials` - List all raw materials
-- `POST /api/raw-materials` - Create raw material
-- `GET /api/purchases` - List all purchases
-- `POST /api/purchases` - Create purchase entry
-- `GET /api/recipes` - List all recipes
-- `POST /api/recipes` - Create recipe
-- `GET /api/production` - List production logs
-- `POST /api/production` - Create production log
-- `POST /api/production/calculate` - Calculate production cost (without deducting stock)
+### Database
 
-## Notes
+- Location: `database/rfb-inventory.json`
+- Backup: Automatic via UI
+- Format: JSON
 
-- Stock is automatically calculated from purchase batches
-- Cost calculations are always based on FIFO
-- Production confirms stock deduction only after user confirmation
-- All costs are tracked and displayed in reports
+## 📱 PWA Features
+
+- Installable on mobile and desktop
+- Offline support (production only)
+- App-like experience
+- Push notifications ready
+
+## 🔐 Security
+
+- JWT-based authentication
+- Role-based access control (RBAC)
+- Password hashing with bcrypt
+- Secure API routes
+
+## 🎨 Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
+- **State**: React Context + SWR
+- **Database**: JSON file (can migrate to PostgreSQL)
+- **Auth**: JWT + bcrypt
+
+## 📚 Documentation
+
+- [Deployment Checklist](./DEPLOYMENT_CHECKLIST.md)
+- [Troubleshooting Guide](./TROUBLESHOOTING.md)
+- [Hydration Fix Summary](./HYDRATION_FIX_SUMMARY.md)
+
+## 🚀 Deployment
+
+### Pre-Deployment
+
+```bash
+# Run checks
+npm run pre-deploy
+
+# Review checklist
+cat DEPLOYMENT_CHECKLIST.md
+```
+
+### Netlify
+
+1. Connect repository
+2. Build command: `npm run build`
+3. Publish directory: `.next`
+4. Set environment variables
+
+### Vercel
+
+```bash
+vercel --prod
+```
+
+### Manual Server
+
+```bash
+npm run build
+npm run start
+```
+
+## 🐛 Troubleshooting
+
+Common issues and solutions in [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+
+Quick fixes:
+```bash
+# Clean cache
+npm run clean
+
+# Full reset
+npm run reset
+
+# Pre-deployment check
+npm run pre-deploy
+```
+
+## 📊 Features in Detail
+
+### Raw Materials
+- Add, edit, delete materials
+- Track stock levels
+- Low stock alerts
+- Purchase history
+
+### Recipes
+- Create recipes with ingredients
+- Calculate costs automatically
+- Print recipes
+- Desired output calculator
+
+### Production
+- Track daily production
+- Calculate production costs
+- Production history
+- Cost analytics
+
+### Reports
+- Cost breakdown
+- Production logs
+- Date range filtering
+- Print reports
+
+### User Management
+- Multiple user roles
+- Access control
+- Password management
+- Activity tracking
+
+## 🔄 Updates
+
+### Version 1.0.0 (December 2024)
+- ✅ Initial release
+- ✅ All core features implemented
+- ✅ PWA support
+- ✅ Responsive design
+- ✅ Production ready
+
+## 📝 License
+
+Private - RISHA FOODS AND BAKERY
+
+## 👨‍💻 Support
+
+For issues or questions:
+1. Check [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+2. Review documentation
+3. Check browser console for errors
+
+---
+
+**Built with ❤️ for RISHA FOODS AND BAKERY**
+
+**Status**: Production Ready ✅  
+**Version**: 1.0.0  
+**Last Updated**: December 2, 2024
+

@@ -22,11 +22,51 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - serve from network, cache for offline
 self.addEventListener('fetch', (event) => {
-  // Skip API routes and non-GET requests
-  if (event.request.url.includes('/api/') || event.request.method !== 'GET') {
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') {
     return
   }
 
+  // Handle API routes with cache-first strategy
+  if (event.request.url.includes('/api/')) {
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        // Return cached response if available and not too old
+        if (cachedResponse) {
+          // Fetch fresh data in background
+          fetch(event.request).then((networkResponse) => {
+            if (networkResponse.ok) {
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, networkResponse.clone())
+              })
+            }
+          }).catch(() => {})
+          return cachedResponse
+        }
+        
+        // If no cache, fetch from network
+        return fetch(event.request)
+          .then((response) => {
+            if (response.ok) {
+              const responseToCache = response.clone()
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, responseToCache)
+              })
+            }
+            return response
+          })
+          .catch(() => {
+            // Return empty array for API errors
+            return new Response(JSON.stringify([]), {
+              headers: { 'Content-Type': 'application/json' }
+            })
+          })
+      })
+    )
+    return
+  }
+
+  // Handle static assets with network-first strategy
   event.respondWith(
     fetch(event.request)
       .then((response) => {

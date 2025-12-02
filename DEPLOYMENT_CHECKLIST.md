@@ -1,172 +1,123 @@
-# Deployment Checklist - RFB Inventory
+# RFB Inventory - Deployment Checklist
 
-## Pre-Deployment Checks ✅
+## Pre-Deployment Checks
 
-### Code Quality
-- [ ] All TypeScript errors resolved
-- [ ] No linter errors
-- [ ] All imports are correct
-- [ ] No console.log statements in production code
-
-### Database Setup
-- [ ] PostgreSQL database created (Supabase/Neon/Railway)
-- [ ] `DATABASE_URL` connection string obtained
-- [ ] Prisma schema updated for PostgreSQL
-- [ ] Database migrations tested locally
-
-### Environment Variables
-- [ ] `DATABASE_URL` ready for production
-- [ ] `JWT_SECRET` generated (strong random string)
-- [ ] All environment variables documented
-
-### Configuration Files
-- [ ] `netlify.toml` configured
-- [ ] `next.config.js` updated
-- [ ] `package.json` scripts verified
-- [ ] `.gitignore` includes sensitive files
-
-### Features Testing
-- [ ] Login functionality works
-- [ ] Raw materials CRUD works
-- [ ] Purchase entry works
-- [ ] Recipe creation works
-- [ ] Production cost calculation works
-- [ ] Reports generation works
-- [ ] Print functionality works
-- [ ] Settings page works
-
-### Security
-- [ ] JWT_SECRET is strong and unique
-- [ ] No hardcoded secrets in code
-- [ ] Admin password changed from default
-- [ ] Authentication is working
-
-### Build Test
-- [ ] `npm run build` succeeds locally
-- [ ] `npm run db:generate` works
-- [ ] No build warnings (or acceptable warnings)
-- [ ] Build output size is reasonable
-
-## Netlify Deployment Steps
-
-### 1. Repository Setup
-- [ ] Code pushed to Git repository (GitHub/GitLab/Bitbucket)
-- [ ] All files committed
-- [ ] `.env` file is NOT in repository (check .gitignore)
-
-### 2. Netlify Configuration
-- [ ] Netlify account created
-- [ ] Site created in Netlify dashboard
-- [ ] Git repository connected
-- [ ] Build settings configured:
-  - Build command: `npm install && npm run db:generate && npm run build`
-  - Publish directory: `.next`
-  - Node version: 20
-
-### 3. Environment Variables (Netlify Dashboard)
-- [ ] `DATABASE_URL` added (PostgreSQL connection string)
-- [ ] `JWT_SECRET` added (strong random string)
-
-### 4. Deployment
-- [ ] Initial deployment triggered
-- [ ] Build succeeds
-- [ ] Site is live
-
-### 5. Post-Deployment
-- [ ] Database migrations run
-- [ ] Admin user created
-- [ ] Login tested
-- [ ] All major features tested
-- [ ] Performance checked
-
-## Migration from SQLite to PostgreSQL
-
-### Required Changes
-
-1. **Update `prisma/schema.prisma`**:
-```prisma
-datasource db {
-  provider = "postgresql"  // Change from "sqlite"
-  url      = env("DATABASE_URL")  // Change from "file:./dev.db"
-}
-```
-
-2. **Run migrations**:
+### 1. Clean Build Test
 ```bash
-npx prisma db push
-npx prisma generate
+# Always run before deployment
+rm -rf .next node_modules/.cache
+npm run build
 ```
 
-3. **Seed data** (optional):
-```bash
-npm run db:seed
-npm run create-admin
-```
+### 2. Environment Variables
+- [ ] `.env.local` configured for development
+- [ ] Production environment variables set on hosting platform
+- [ ] `JWT_SECRET` changed from default
+- [ ] `DATABASE_URL` configured correctly
 
-## Environment Variables Reference
+### 3. Console Errors Check
+- [ ] No hydration errors in browser console
+- [ ] No 404 errors for static files
+- [ ] No React warnings
+- [ ] Service Worker only in production
 
-### Required in Netlify:
-```
-DATABASE_URL=postgresql://user:password@host:port/database
-JWT_SECRET=your-strong-random-secret-key-here
-```
+### 4. Performance Check
+- [ ] All pages load without errors
+- [ ] Images optimized
+- [ ] No unnecessary console logs
+- [ ] Webpack noise minimized
 
-### How to Generate JWT_SECRET:
-```bash
-# Using Node.js
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-
-# Or use an online generator
-# https://generate-secret.vercel.app/32
-```
+### 5. Security Check
+- [ ] No sensitive data in client-side code
+- [ ] API routes properly secured
+- [ ] User authentication working
+- [ ] Role-based access control tested
 
 ## Common Issues & Solutions
 
-### Issue: Build fails with Prisma error
-**Solution**: 
-- Run `npm run db:generate` locally first
-- Ensure `DATABASE_URL` is set in Netlify environment variables
+### Issue: Hydration Errors
+**Solution**: All client-only code wrapped with `mounted` state
+```typescript
+const [mounted, setMounted] = useState(false)
+useEffect(() => setMounted(true), [])
+{mounted && <ClientOnlyComponent />}
+```
 
-### Issue: Database connection fails
-**Solution**:
-- Verify `DATABASE_URL` format is correct
-- Check PostgreSQL provider allows connections from anywhere (or whitelist Netlify IPs)
-- Test connection string locally
+### Issue: 404 Favicon
+**Solution**: Favicon exists at `/public/favicon.ico` with proper metadata
 
-### Issue: 500 errors on API routes
-**Solution**:
-- Check Netlify function logs
-- Verify Prisma Client is generated
-- Check environment variables are set
+### Issue: Service Worker Logs
+**Solution**: Service Worker only registers in production mode
 
-### Issue: Admin login doesn't work
-**Solution**:
-- Run `npm run create-admin` script after deployment
-- Or manually create admin user via database
+### Issue: Console Noise
+**Solution**: `next.config.js` has `infrastructureLogging: { level: 'error' }`
 
-## Final Verification
+## Deployment Commands
 
-Before going live, test:
-- [ ] Login with admin credentials
-- [ ] Create a raw material
-- [ ] Add a purchase entry
-- [ ] Create a recipe
-- [ ] Run production calculation
-- [ ] Generate a report
-- [ ] Print functionality
-- [ ] Settings page
+### Netlify
+```bash
+# Build command
+npm run build
 
-## Notes
+# Publish directory
+.next
 
-- SQLite files cannot be deployed to Netlify
-- PostgreSQL is required for serverless deployment
-- Always use environment variables, never hardcode secrets
-- Test thoroughly after deployment
-- Keep database backups
+# Environment variables (set in Netlify dashboard)
+NODE_ENV=production
+JWT_SECRET=your-production-secret
+```
 
-## Support Resources
+### Vercel
+```bash
+# Vercel will auto-detect Next.js
+vercel --prod
+```
 
-- Netlify Docs: https://docs.netlify.com/
-- Prisma Deployment: https://www.prisma.io/docs/guides/deployment
-- Supabase Setup: https://supabase.com/docs
+### Manual Server
+```bash
+npm run build
+npm run start
+```
+
+## Post-Deployment Verification
+
+- [ ] Visit production URL
+- [ ] Check browser console (should be clean)
+- [ ] Test login functionality
+- [ ] Test all CRUD operations
+- [ ] Verify PWA install prompt works
+- [ ] Test on mobile devices
+- [ ] Check all navigation links
+- [ ] Verify print functionality
+- [ ] Test backup/restore features
+
+## Maintenance
+
+### Regular Tasks
+1. Check error logs weekly
+2. Update dependencies monthly
+3. Backup database regularly
+4. Monitor performance metrics
+5. Review user feedback
+
+### Emergency Rollback
+```bash
+# If deployment fails, rollback to previous version
+git revert HEAD
+git push origin main
+```
+
+## Support
+
+For issues, check:
+1. `HYDRATION_FIX_SUMMARY.md` - Hydration error solutions
+2. Browser console - Error messages
+3. Build logs - Compilation errors
+4. Network tab - API failures
+
+---
+
+**Last Updated**: December 2, 2024
+**Version**: 1.0.0
+**Status**: Production Ready ✅
 

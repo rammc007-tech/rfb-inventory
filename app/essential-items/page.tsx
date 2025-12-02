@@ -8,8 +8,18 @@ import useSWR from 'swr'
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function EssentialItemsPage() {
-  const { data: materials, mutate } = useSWR('/api/raw-materials', fetcher)
-  const { data: purchases } = useSWR('/api/purchases', fetcher)
+  const { data: materials, mutate } = useSWR('/api/raw-materials', fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: true,
+    dedupingInterval: 2000,
+    errorRetryCount: 3,
+    errorRetryInterval: 1000,
+  })
+  const { data: purchases } = useSWR('/api/purchases', fetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 2000,
+    errorRetryCount: 3,
+  })
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({ name: '', unit: 'kg' })
   const [searchTerm, setSearchTerm] = useState('')

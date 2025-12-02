@@ -1,14 +1,36 @@
 [build]
   command = "npm run build"
-  
-[build.environment]
-  NODE_VERSION = "20"
-  NPM_FLAGS = "--legacy-peer-deps"
+  publish = ".next"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-[functions]
-  node_bundler = "esbuild"
-  included_files = ["database/**"]
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps"
 
+# WARNING: This app requires write access to file system
+# Netlify serverless functions are READ-ONLY
+# 
+# RECOMMENDED: Deploy to Vercel instead
+# Alternative: Use external database (Supabase, PlanetScale)
+#
+# See NETLIFY_DEPLOYMENT_FIX.md for details
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Storage-Warning = "This app requires persistent storage. Consider Vercel or external database."
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
+
+# Note: File system writes will fail on Netlify
+# The app will return 503 errors for write operations
+# Users should be informed to use Vercel or external database

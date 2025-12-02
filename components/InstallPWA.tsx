@@ -8,23 +8,31 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
 
-export default function InstallPWA() {
+export function useInstallPWA() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [showInstallButton, setShowInstallButton] = useState(false)
+  const [isInstalled, setIsInstalled] = useState(false)
 
   useEffect(() => {
-    const handler = (e: Event) => {
-      e.preventDefault()
-      setDeferredPrompt(e as BeforeInstallPromptEvent)
-      setShowInstallButton(true)
-    }
-
-    window.addEventListener('beforeinstallprompt', handler)
+    if (typeof window === 'undefined') return
 
     // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsInstalled(true)
       setShowInstallButton(false)
+      return
     }
+
+    const handler = (e: Event) => {
+      // Prevent default banner
+      e.preventDefault()
+      setDeferredPrompt(e as BeforeInstallPromptEvent)
+      setShowInstallButton(true)
+      
+      // Silent - no console logs
+    }
+
+    window.addEventListener('beforeinstallprompt', handler)
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handler)
@@ -32,26 +40,51 @@ export default function InstallPWA() {
   }, [])
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return
+    if (!deferredPrompt) {
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        alert('To install this app on iOS:\n1. Tap the Share button\n2. Tap "Add to Home Screen"')
+      }
+      return
+    }
 
-    deferredPrompt.prompt()
-    const { outcome } = await deferredPrompt.userChoice
+    try {
+      deferredPrompt.prompt()
+      const { outcome } = await deferredPrompt.userChoice
 
-    if (outcome === 'accepted') {
-      setShowInstallButton(false)
-      setDeferredPrompt(null)
+      if (outcome === 'accepted') {
+        setShowInstallButton(false)
+        setDeferredPrompt(null)
+        setIsInstalled(true)
+      }
+    } catch (error) {
+      console.error('Install error:', error)
     }
   }
 
-  if (!showInstallButton) return null
+  return {
+    showInstallButton: showInstallButton && !isInstalled,
+    handleInstallClick,
+  }
+}
+
+export function InstallButton() {
+  const { showInstallButton, handleInstallClick } = useInstallPWA()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted || !showInstallButton) return null
 
   return (
     <button
       onClick={handleInstallClick}
-      className="fixed bottom-4 right-4 flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg shadow-lg hover:bg-primary-700 transition z-50"
+      className="flex items-center gap-2 px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+      title="Install App"
     >
-      <Download size={20} />
-      <span>Install App</span>
+      <Download size={18} />
+      <span className="text-sm font-medium">Install</span>
     </button>
   )
 }

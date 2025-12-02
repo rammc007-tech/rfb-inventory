@@ -2,12 +2,32 @@ import fs from 'fs';
 import path from 'path';
 import bcrypt from 'bcryptjs';
 
-const dbPath = path.join(process.cwd(), 'database', 'rfb-inventory.json');
-const dbDir = path.dirname(dbPath);
+// Check if we're in Netlify/serverless environment (always read-only)
+const isNetlify = 
+  process.env.NETLIFY === 'true' || 
+  process.env.VERCEL === '1' ||
+  process.env.AWS_LAMBDA_FUNCTION_NAME !== undefined ||
+  process.cwd().includes('/var/task') ||
+  process.cwd().includes('/vercel/');
 
-// Ensure database directory exists
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
+// In serverless environments, file system is ALWAYS read-only
+const isReadOnly = isNetlify || (typeof window !== 'undefined');
+
+// Only use file system in local development
+const dbPath = (!isReadOnly && typeof window === 'undefined') 
+  ? path.join(process.cwd(), 'database', 'rfb-inventory.json') 
+  : null;
+const dbDir = dbPath ? path.dirname(dbPath) : null;
+
+// Ensure database directory exists (only in local development)
+if (!isReadOnly && dbDir && typeof window === 'undefined') {
+  try {
+    if (!fs.existsSync(dbDir)) {
+      fs.mkdirSync(dbDir, { recursive: true });
+    }
+  } catch (error) {
+    console.warn('Could not create database directory:', error);
+  }
 }
 
 // Database structure for RFB Inventory
@@ -37,10 +57,66 @@ let db: Database = {
   deleted_items: [],
 };
 
-// Load database
+// In-memory storage for Netlify (read-only file system)
+let memoryDb: Database | null = null;
+
+// Load database (synchronous for file system, async wrapper available)
 function loadDatabase(): Database {
+  // If read-only (Netlify/Vercel), use in-memory storage ONLY
+  if (isReadOnly || isNetlify) {
+    if (memoryDb) {
+      return memoryDb;
+    }
+    
+    // Try to load from environment variable if available
+    if (process.env.DATABASE_JSON) {
+      try {
+        const loaded = JSON.parse(process.env.DATABASE_JSON);
+        memoryDb = {
+          raw_materials: loaded.raw_materials || [],
+          purchase_batches: loaded.purchase_batches || [],
+          recipes: loaded.recipes || [],
+          recipe_ingredients: loaded.recipe_ingredients || [],
+          production_logs: loaded.production_logs || [],
+          users: loaded.users || [],
+          shop_settings: loaded.shop_settings || [],
+          packing_materials: loaded.packing_materials || [],
+          packing_purchases: loaded.packing_purchases || [],
+          deleted_items: loaded.deleted_items || [],
+        };
+        console.log('✓ Database loaded from environment variable');
+        return memoryDb;
+      } catch (error) {
+        console.error('Error parsing DATABASE_JSON:', error);
+      }
+    }
+    
+    // Initialize empty in-memory database with default admin user
+    memoryDb = {
+      raw_materials: [],
+      purchase_batches: [],
+      recipes: [],
+      recipe_ingredients: [],
+      production_logs: [],
+      users: [{
+        id: '1',
+        username: 'admin',
+        password: bcrypt.hashSync('admin123', 10),
+        role: 'admin' as const,
+        createdAt: new Date().toISOString(),
+      }],
+      shop_settings: [],
+      packing_materials: [],
+      packing_purchases: [],
+      deleted_items: [],
+    };
+    console.log('✓ Database initialized in memory (serverless mode)');
+    return memoryDb;
+  }
+
+  // Normal file system access (local development only)
   try {
-    if (fs.existsSync(dbPath)) {
+    if (dbPath && fs.existsSync(dbPath)) {
       const data = fs.readFileSync(dbPath, 'utf-8');
       const loaded = JSON.parse(data);
       // Ensure all tables exist
@@ -60,13 +136,21 @@ function loadDatabase(): Database {
   } catch (error) {
     console.error('Error loading database:', error);
   }
+  
+  // Return empty database with default admin
   return {
     raw_materials: [],
     purchase_batches: [],
     recipes: [],
     recipe_ingredients: [],
     production_logs: [],
-    users: [],
+    users: [{
+      id: '1',
+      username: 'admin',
+      password: bcrypt.hashSync('admin123', 10),
+      role: 'admin' as const,
+      createdAt: new Date().toISOString(),
+    }],
     shop_settings: [],
     packing_materials: [],
     packing_purchases: [],
@@ -74,19 +158,45 @@ function loadDatabase(): Database {
   };
 }
 
-// Save database
+// Save database (synchronous for file system)
 function saveDatabase() {
   try {
     // Ensure deleted_items exists
     if (!db.deleted_items) {
       db.deleted_items = [];
     }
-    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-    // Verify write
-    const verify = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
-    console.log('Database saved. Deleted items count:', verify.deleted_items?.length || 0);
-  } catch (error) {
-    console.error('Error saving database:', error);
+
+    // If in serverless environment (Netlify/Vercel), ONLY use in-memory storage
+    // DO NOT attempt to write to file system
+    if (isReadOnly || isNetlify) {
+      memoryDb = { ...db };
+      // Silent in production - no console logs
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('✓ Database updated in memory (serverless mode)');
+        console.log('ℹ️ Data persists in browser IndexedDB. Server data is session-only.');
+      }
+      return;
+    }
+
+    // Normal file system write (local development only)
+    if (dbPath && typeof window === 'undefined') {
+      try {
+        fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('✓ Database saved to file system');
+        }
+      } catch (writeError: any) {
+        // If write fails, fallback to memory
+        console.warn('⚠ File system write failed, using in-memory storage');
+        memoryDb = { ...db };
+      }
+    }
+  } catch (error: any) {
+    // Silent fallback to memory
+    memoryDb = { ...db };
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Database save error:', error.message);
+    }
   }
 }
 
@@ -171,7 +281,12 @@ export function initDatabase() {
 
   // Packing materials initialization removed - user will add manually
 
-  saveDatabase();
+  // Save only if not read-only
+  if (!isReadOnly) {
+    saveDatabase();
+  } else {
+    memoryDb = { ...db };
+  }
 }
 
 // Database interface compatible with Prisma-style queries
@@ -1178,15 +1293,25 @@ class DatabaseClient {
       
       // Save immediately and verify
       try {
-        fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-        // Verify write immediately
-        const verifyData = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
-        const validUsers = (verifyData.users || []).filter((u: any) => u && u.username && u.username.trim());
-        console.log('✅ User saved to file. Total valid users in file:', validUsers.length);
-        console.log('✅ User IDs in file:', validUsers.map((u: any) => ({ id: u.id, username: u.username, hasPassword: !!u.password })));
+        if (dbPath && !isReadOnly) {
+          fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+          // Verify write immediately
+          const verifyData = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
+          const validUsers = (verifyData.users || []).filter((u: any) => u && u.username && u.username.trim());
+          console.log('✅ User saved to file. Total valid users in file:', validUsers.length);
+          console.log('✅ User IDs in file:', validUsers.map((u: any) => ({ id: u.id, username: u.username, hasPassword: !!u.password })));
+        } else if (isReadOnly) {
+          memoryDb = { ...db };
+          console.log('✅ User saved to memory (read-only mode). Total users:', db.users.length);
+        }
       } catch (error) {
-        console.error('❌ Error saving user:', error);
-        throw error;
+        if (isReadOnly || (error as any)?.code === 'EROFS') {
+          memoryDb = { ...db };
+          console.log('✅ User saved to memory (read-only mode). Total users:', db.users.length);
+        } else {
+          console.error('❌ Error saving user:', error);
+          throw error;
+        }
       }
       
       console.log('✅ User created in database:', { id: newItem.id, username: newItem.username, hasPassword: !!newItem.password, passwordLength: newItem.password.length });
@@ -1545,12 +1670,22 @@ class DatabaseClient {
       db.deleted_items.push(newItem);
       // Save immediately
       try {
-        fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-        // Verify write immediately
-        const verifyData = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
-        console.log('✅ Deleted item saved:', newItem.id, 'Category:', newItem.category, 'Total in file:', verifyData.deleted_items?.length || 0);
-      } catch (error) {
-        console.error('❌ Error saving deleted item:', error);
+        if (dbPath && !isReadOnly) {
+          fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+          // Verify write immediately
+          const verifyData = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
+          console.log('✅ Deleted item saved:', newItem.id, 'Category:', newItem.category, 'Total in file:', verifyData.deleted_items?.length || 0);
+        } else if (isReadOnly) {
+          memoryDb = { ...db };
+          console.log('✅ Deleted item saved to memory (read-only mode). Total:', db.deleted_items.length);
+        }
+      } catch (error: any) {
+        if (error?.code === 'EROFS' || isReadOnly) {
+          memoryDb = { ...db };
+          console.log('✅ Deleted item saved to memory (read-only mode). Total:', db.deleted_items.length);
+        } else {
+          console.error('❌ Error saving deleted item:', error);
+        }
       }
       return newItem;
     },

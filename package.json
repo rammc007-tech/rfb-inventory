@@ -4,13 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
+    "dev:clean": "rm -rf .next node_modules/.cache && next dev -p 3001",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3001",
     "lint": "next lint",
     "create-admin": "tsx scripts/create-admin.ts",
     "test-data": "tsx scripts/test-data.ts",
     "seed-data": "tsx scripts/seed-complete-data.ts",
-    "test": "tsx scripts/full-test.ts"
+    "test": "tsx scripts/full-test.ts",
+    "fix": "rm -rf .next node_modules/.cache && npm run build",
+    "clean": "rm -rf .next node_modules/.cache",
+    "reset": "rm -rf .next node_modules/.cache node_modules && npm install",
+    "check": "npm run lint && npm run build"
   },
   "dependencies": {
     "next": "14.0.4",

@@ -9,7 +9,17 @@ import { getUserRole } from '@/lib/access-control'
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function RawMaterialsPage() {
-  const { data: materials, error, isLoading, mutate } = useSWR('/api/raw-materials', fetcher)
+  const { data: materials, error, isLoading, mutate } = useSWR('/api/raw-materials', fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: true,
+    dedupingInterval: 2000,
+    errorRetryCount: 3,
+    errorRetryInterval: 1000,
+    onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+      if (retryCount >= 3) return
+      setTimeout(() => revalidate({ retryCount }), 1000)
+    },
+  })
   const { data: accessControl } = useSWR('/api/settings/access-control', fetcher)
   const [userRole, setUserRole] = useState<'user' | 'supervisor' | 'admin' | null>(null)
   const [canDelete, setCanDelete] = useState(false)
@@ -42,14 +52,16 @@ export default function RawMaterialsPage() {
           body: JSON.stringify(formData),
         })
         if (res.ok) {
+          const updated = await res.json()
           mutate()
           setFormData({ name: '', unit: 'kg' })
           setShowForm(false)
           setEditingMaterial(null)
           alert('Material updated successfully!')
         } else {
-          const error = await res.json()
-          alert(error.error || 'Failed to update material')
+          const errorData = await res.json()
+          console.error('Update error:', errorData)
+          alert(errorData.error || 'Failed to update material')
         }
       } else {
         // Create new material
@@ -58,13 +70,18 @@ export default function RawMaterialsPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData),
         })
-        if (res.ok) {
+        
+        if (res.ok || res.status === 201) {
+          const newMaterial = await res.json()
+          console.log('Material created:', newMaterial)
           mutate()
           setFormData({ name: '', unit: 'kg' })
           setShowForm(false)
+          alert('Material created successfully!')
         } else {
-          const error = await res.json()
-          alert(error.error || 'Failed to create material')
+          const errorData = await res.json()
+          console.error('Create error:', errorData)
+          alert(errorData.error || `Failed to create material (Status: ${res.status})`)
         }
       }
     } catch (error) {
@@ -111,7 +128,18 @@ export default function RawMaterialsPage() {
   }
 
   // Ensure materials is always an array
+  // Ensure materials is always an array
   const materialsList = Array.isArray(materials) ? materials : []
+  
+  // Add retry logic for failed requests
+  useEffect(() => {
+    if (error && !isLoading) {
+      const timer = setTimeout(() => {
+        mutate()
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [error, isLoading, mutate])
   
   const filteredMaterials = materialsList.filter((material: any) => {
     // Safety check: ensure material exists and has required properties

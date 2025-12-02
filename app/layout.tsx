@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { AuthProvider } from '@/contexts/AuthContext'
-import InstallPWA from '@/components/InstallPWA'
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration'
 
 export const metadata: Metadata = {
@@ -10,6 +9,10 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   themeColor: '#dc2626',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+  icons: {
+    icon: '/icon',
+    apple: '/apple-icon',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -26,15 +29,18 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="RFB Inventory" />
+        <meta name="mobile-web-app-capable" content="yes" />
       </head>
-      <body className="antialiased">
+      <body className="antialiased" suppressHydrationWarning>
         <ServiceWorkerRegistration />
         <AuthProvider>
           {children}
-          <InstallPWA />
         </AuthProvider>
       </body>
     </html>

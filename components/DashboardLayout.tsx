@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import ShopLogo from '@/components/ShopLogo'
+import { InstallButton } from '@/components/InstallPWA'
 import useSWR from 'swr'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
@@ -49,17 +50,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [currentUser, setCurrentUser] = useState<any>(null)
+  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const { user, logout, isAuthenticated } = useAuth()
   const { data: shopSettings } = useSWR('/api/settings', fetcher)
 
   useEffect(() => {
+    setMounted(true)
     // Get user from localStorage
     if (typeof window !== 'undefined') {
       const userStr = localStorage.getItem('rfb_user')
       if (userStr) {
-        setCurrentUser(JSON.parse(userStr))
+        try {
+          setCurrentUser(JSON.parse(userStr))
+        } catch (e) {
+          console.error('Error parsing user from localStorage:', e)
+        }
       }
     }
   }, [user])
@@ -102,15 +109,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Mobile Header */}
       <div className="lg:hidden bg-white shadow-sm border-b border-gray-200 no-print">
         <div className="flex items-center justify-between p-4">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-lg hover:bg-gray-100"
-          >
-            {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {mounted && (
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 rounded-lg hover:bg-gray-100"
+            >
+              {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          )}
+          {!mounted && <div className="w-10 h-10" />}
           <ShopLogo size="small" showText={false} />
           <div className="flex items-center gap-2">
-            {currentUser && (
+            {mounted && currentUser && (
               <div className="flex items-center gap-2 px-2 py-1 bg-blue-50 rounded-lg">
                 <User size={16} className="text-blue-600" />
                 <span className="text-xs font-medium text-blue-800">{currentUser.username}</span>
@@ -123,14 +133,17 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 </span>
               </div>
             )}
-            <button
-              onClick={handleFullscreen}
-              className="p-2 rounded-lg hover:bg-gray-100"
-              title="Toggle Fullscreen"
-            >
-              {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
-            </button>
-            {isAuthenticated ? (
+            {mounted && <InstallButton />}
+            {mounted && (
+              <button
+                onClick={handleFullscreen}
+                className="p-2 rounded-lg hover:bg-gray-100"
+                title="Toggle Fullscreen"
+              >
+                {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+              </button>
+            )}
+            {mounted && (isAuthenticated ? (
               <button
                 onClick={handleLogout}
                 className="p-2 rounded-lg hover:bg-red-100 text-red-600"
@@ -146,7 +159,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               >
                 <LogIn size={20} />
               </Link>
-            )}
+            ))}
+            {!mounted && <div className="w-10 h-10" />}
           </div>
         </div>
       </div>
@@ -224,44 +238,53 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   'Dashboard'}
               </h1>
               <div className="flex items-center gap-3">
-                {currentUser && (
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-lg border border-blue-200">
-                    <User size={18} className="text-blue-600" />
-                    <span className="text-sm font-medium text-blue-800">{currentUser.username}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded font-semibold ${
-                      currentUser.role === 'admin' ? 'bg-purple-100 text-purple-800' :
-                      currentUser.role === 'supervisor' ? 'bg-orange-100 text-orange-800' :
-                      'bg-green-100 text-green-800'
-                    }`}>
-                      {currentUser.role}
-                    </span>
-                  </div>
-                )}
-                <button
-                  onClick={handleFullscreen}
-                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                  title="Toggle Fullscreen"
-                >
-                  {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
-                </button>
-                {isAuthenticated ? (
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-100 text-red-600 transition-colors"
-                    title="Logout"
-                  >
-                    <LogOut size={18} />
-                    <span className="text-sm font-medium">Logout</span>
-                  </button>
+                {mounted ? (
+                  <>
+                    {currentUser && (
+                      <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-lg border border-blue-200">
+                        <User size={18} className="text-blue-600" />
+                        <span className="text-sm font-medium text-blue-800">{currentUser.username}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded font-semibold ${
+                          currentUser.role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                          currentUser.role === 'supervisor' ? 'bg-orange-100 text-orange-800' :
+                          'bg-green-100 text-green-800'
+                        }`}>
+                          {currentUser.role}
+                        </span>
+                      </div>
+                    )}
+                    <InstallButton />
+                    <button
+                      onClick={handleFullscreen}
+                      className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                      title="Toggle Fullscreen"
+                    >
+                      {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+                    </button>
+                    {isAuthenticated ? (
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-100 text-red-600 transition-colors"
+                        title="Logout"
+                      >
+                        <LogOut size={18} />
+                        <span className="text-sm font-medium">Logout</span>
+                      </button>
+                    ) : (
+                      <Link
+                        href="/"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 text-blue-600 transition-colors"
+                        title="Login"
+                      >
+                        <LogIn size={18} />
+                        <span className="text-sm font-medium">Login</span>
+                      </Link>
+                    )}
+                  </>
                 ) : (
-                  <Link
-                    href="/"
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 text-blue-600 transition-colors"
-                    title="Login"
-                  >
-                    <LogIn size={18} />
-                    <span className="text-sm font-medium">Login</span>
-                  </Link>
+                  <div className="flex items-center gap-3">
+                    <div className="w-32 h-8" />
+                  </div>
                 )}
               </div>
             </div>

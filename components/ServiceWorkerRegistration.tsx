@@ -4,19 +4,26 @@ import { useEffect } from 'react'
 
 export default function ServiceWorkerRegistration() {
   useEffect(() => {
-    if ('serviceWorker' in navigator && typeof window !== 'undefined') {
-      // Only register in production or when explicitly needed
-      if (process.env.NODE_ENV === 'production' || window.location.hostname === 'localhost') {
+    if (typeof window === 'undefined') return
+    
+    // Only register in production
+    if (process.env.NODE_ENV !== 'production') return
+    
+    if ('serviceWorker' in navigator) {
       navigator.serviceWorker
-          .register('/sw.js', { scope: '/' })
+        .register('/sw.js', { scope: '/' })
         .then((registration) => {
-          console.log('Service Worker registered:', registration)
+          // Silent success - no console log in production
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✓ Service Worker registered')
+          }
         })
         .catch((error) => {
-            // Silently fail - PWA is optional
-            console.log('Service Worker registration failed (non-critical):', error.message)
+          // Silent fail - PWA is optional
+          if (process.env.NODE_ENV === 'development') {
+            console.log('ℹ Service Worker not available:', error.message)
+          }
         })
-      }
     }
   }, [])
 

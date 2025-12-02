@@ -6,6 +6,12 @@ import type { Unit } from '@/lib/types'
 // GET all raw materials with current stock
 export async function GET() {
   try {
+    // Add cache headers for better performance
+    const headers = {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=60',
+    }
+
     // Fetch materials - handle both array and non-array responses
     let materials: any[] = []
     try {
@@ -17,7 +23,7 @@ export async function GET() {
       materials = Array.isArray(materialsResult) ? materialsResult : []
     } catch (err: any) {
       console.error('Error fetching materials:', err?.message || err)
-      return NextResponse.json([])
+      return NextResponse.json([], { status: 200, headers })
     }
 
     // Get purchase batches separately
@@ -110,12 +116,24 @@ export async function GET() {
         }
       })
 
-    return NextResponse.json(materialsWithStock)
+    return NextResponse.json(materialsWithStock, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=60',
+      },
+    })
   } catch (error: any) {
     console.error('Error fetching raw materials:', error?.message || error)
     console.error('Error stack:', error?.stack)
     // Return empty array instead of error to prevent UI issues
-    return NextResponse.json([])
+    return NextResponse.json([], {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+      },
+    })
   }
 }
 
@@ -125,12 +143,19 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { name, unit, isEssential } = body
 
+    console.log('Creating raw material:', { name, unit, isEssential })
+
     if (!name || !unit) {
+      console.error('Validation failed: name or unit missing', { name, unit })
       return NextResponse.json(
         { error: 'Name and unit are required' },
         { status: 400 }
       )
     }
+
+    // Ensure database is initialized
+    const { initDatabase } = require('@/lib/database')
+    initDatabase()
 
     let material: any
     try {
@@ -141,44 +166,59 @@ export async function POST(request: NextRequest) {
           isEssential: isEssential || false,
         },
       })
+      console.log('Material created successfully:', material?.id)
     } catch (createError: any) {
       console.error('Error creating material:', createError)
-      if (createError.code === 'P2002' || createError.message?.includes('already exists')) {
+      console.error('Error details:', {
+        code: createError.code,
+        message: createError.message,
+        stack: createError.stack,
+      })
+      if (createError.code === 'P2002' || createError.message?.includes('already exists') || createError.message?.includes('Unique constraint')) {
         return NextResponse.json(
           { error: 'Raw material with this name already exists' },
           { status: 400 }
         )
       }
-      throw createError
+      // Return more detailed error for debugging
+      return NextResponse.json(
+        { error: `Failed to create material: ${createError.message || 'Unknown error'}` },
+        { status: 400 }
+      )
     }
 
     if (!material || !material.id) {
+      console.error('Material creation returned invalid response:', material)
       return NextResponse.json(
         { error: 'Failed to create material - invalid response' },
         { status: 500 }
       )
     }
 
-    return NextResponse.json({
-        id: material.id,
-        name: material.name || name.trim(),
-        unit: material.unit || unit,
-        isEssential: material.isEssential || false,
-        currentStock: 0,
-        stockUnit: material.unit || unit,
-        createdAt: material.createdAt || new Date().toISOString(),
-        updatedAt: material.updatedAt || new Date().toISOString(),
-    })
+    const response = {
+      id: material.id,
+      name: material.name || name.trim(),
+      unit: material.unit || unit,
+      isEssential: material.isEssential || false,
+      currentStock: 0,
+      stockUnit: material.unit || unit,
+      createdAt: material.createdAt || new Date().toISOString(),
+      updatedAt: material.updatedAt || new Date().toISOString(),
+    }
+
+    console.log('Returning created material:', response)
+    return NextResponse.json(response, { status: 201 })
   } catch (error: any) {
+    console.error('Unexpected error in POST /api/raw-materials:', error)
+    console.error('Error stack:', error?.stack)
     if (error.code === 'P2002') {
       return NextResponse.json(
         { error: 'Raw material with this name already exists' },
         { status: 400 }
       )
     }
-    console.error('Error creating raw material:', error)
     return NextResponse.json(
-      { error: 'Failed to create raw material' },
+      { error: `Failed to create raw material: ${error.message || 'Unknown error'}` },
       { status: 500 }
     )
   }

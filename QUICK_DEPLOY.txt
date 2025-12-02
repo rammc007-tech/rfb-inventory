@@ -1,0 +1,67 @@
+===========================================
+VERCEL DEPLOYMENT - QUICK LINKS
+===========================================
+
+STEP 1: PUSH TO GITHUB
+-----------------------
+Run these commands:
+
+cd "/Users/ramelumalai/RFB inventory"
+git add .
+git commit -m "Ready for Vercel"
+git push origin main
+
+
+STEP 2: DEPLOY TO VERCEL
+-------------------------
+Go to this link:
+
+👉 https://vercel.com/new
+
+Then:
+1. Sign up with GitHub
+2. Import "rfb-inventory" repository
+3. Click "Deploy"
+4. Wait 2-3 minutes
+5. ✅ Done!
+
+
+STEP 3: ADD ENVIRONMENT VARIABLES
+----------------------------------
+After deployment, go to:
+
+👉 https://vercel.com/dashboard
+
+Then:
+1. Click your project
+2. Go to Settings > Environment Variables
+3. Add:
+   - JWT_SECRET = rfb-secret-key-production-2024
+   - NODE_ENV = production
+4. Redeploy
+
+
+YOUR APP WILL BE LIVE AT:
+--------------------------
+https://rfb-inventory.vercel.app
+
+
+IMPORTANT LINKS:
+----------------
+Vercel Signup: https://vercel.com/signup
+New Project: https://vercel.com/new
+Dashboard: https://vercel.com/dashboard
+Docs: https://vercel.com/docs
+
+
+SUPPORT:
+--------
+If you need help, check:
+- VERCEL_DEPLOY_STEPS.md (detailed guide)
+- DEPLOY_TO_VERCEL.md (full documentation)
+
+
+===========================================
+இந்த steps follow செய்தால் உங்கள் app 
+perfect-ஆக work செய்யும்! ✅
+===========================================
