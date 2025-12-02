@@ -6,24 +6,32 @@ export default function ServiceWorkerRegistration() {
   useEffect(() => {
     if (typeof window === 'undefined') return
     
-    // Only register in production
-    if (process.env.NODE_ENV !== 'production') return
-    
+    // Register service worker for PWA functionality
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/sw.js', { scope: '/' })
-        .then((registration) => {
-          // Silent success - no console log in production
-          if (process.env.NODE_ENV === 'development') {
-            console.log('✓ Service Worker registered')
-          }
-        })
-        .catch((error) => {
-          // Silent fail - PWA is optional
-          if (process.env.NODE_ENV === 'development') {
-            console.log('ℹ Service Worker not available:', error.message)
-          }
-        })
+      // Register on page load
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('/sw.js', { scope: '/' })
+          .then((registration) => {
+            console.log('✓ Service Worker registered successfully')
+            
+            // Check for updates
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing
+              if (newWorker) {
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // New service worker available
+                    console.log('New version available! Refresh to update.')
+                  }
+                })
+              }
+            })
+          })
+          .catch((error) => {
+            console.warn('Service Worker registration failed:', error.message)
+          })
+      })
     }
   }, [])
 

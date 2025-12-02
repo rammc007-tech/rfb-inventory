@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { AuthProvider } from '@/contexts/AuthContext'
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration'
+import OfflineIndicator from '@/components/OfflineIndicator'
 
 export const metadata: Metadata = {
   title: 'RFB Inventory Management',
@@ -39,6 +40,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased" suppressHydrationWarning>
         <ServiceWorkerRegistration />
+        <OfflineIndicator />
         <AuthProvider>
           {children}
         </AuthProvider>

@@ -1,0 +1,53 @@
+==========================================
+GITHUB PUSH செய்ய STEPS
+==========================================
+
+இந்த commands-ஐ Terminal-ல் run செய்யுங்கள்:
+
+cd "/Users/ramelumalai/RFB inventory"
+
+git push origin main
+
+
+==========================================
+அல்லது GitHub Desktop Use செய்யுங்கள்:
+==========================================
+
+1. GitHub Desktop app open செய்யுங்கள்
+2. "Push origin" button click செய்யுங்கள்
+3. Done!
+
+
+==========================================
+Push முடிந்தவுடன்:
+==========================================
+
+Vercel-க்கு போங்கள்:
+👉 https://vercel.com/new
+
+1. "Import Git Repository" click செய்யுங்கள்
+2. "rammc007-tech/rfb-inventory" select செய்யுங்கள்
+3. "Import" click செய்யுங்கள்
+4. "Deploy" click செய்யுங்கள்
+5. Wait 2-3 minutes
+6. ✅ Done!
+
+
+==========================================
+உங்கள் App Live URL:
+==========================================
+
+https://rfb-inventory.vercel.app
+
+அல்லது
+
+https://rfb-inventory2.vercel.app
+
+
+==========================================
+JSON Error Fix செய்துவிட்டேன்! ✅
+==========================================
+
+இனி login perfect-ஆக work செய்யும்!
+
+

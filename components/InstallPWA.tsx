@@ -41,23 +41,51 @@ export function useInstallPWA() {
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
+      // iOS installation instructions
       if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-        alert('To install this app on iOS:\n1. Tap the Share button\n2. Tap "Add to Home Screen"')
+        alert(
+          '📱 iOS Installation:\n\n' +
+          '1. Tap the Share button (⬆️)\n' +
+          '2. Scroll and tap "Add to Home Screen"\n' +
+          '3. Tap "Add"\n\n' +
+          '✅ The app will appear on your home screen!'
+        )
+      } else {
+        // Android/Desktop fallback
+        alert(
+          '📱 Installation:\n\n' +
+          'To install this app:\n' +
+          '1. Look for the install icon in your browser\n' +
+          '2. Or check browser menu for "Install app"\n' +
+          '3. Follow the prompts\n\n' +
+          '✅ The app will be installed on your device!'
+        )
       }
       return
     }
 
     try {
-      deferredPrompt.prompt()
+      // Show the install prompt
+      await deferredPrompt.prompt()
+      
+      // Wait for user choice
       const { outcome } = await deferredPrompt.userChoice
+      
+      console.log(`User ${outcome} the install prompt`)
 
       if (outcome === 'accepted') {
         setShowInstallButton(false)
         setDeferredPrompt(null)
         setIsInstalled(true)
+        
+        // Show success message
+        setTimeout(() => {
+          alert('✅ App installed successfully! You can now access it from your home screen.')
+        }, 500)
       }
     } catch (error) {
       console.error('Install error:', error)
+      alert('Installation failed. Please try again or install manually from browser menu.')
     }
   }
 

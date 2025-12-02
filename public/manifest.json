@@ -2,11 +2,12 @@
   "name": "RFB Inventory Management",
   "short_name": "RFB Inventory",
   "description": "RISHA FOODS AND BAKERY - Inventory Management System",
-  "start_url": "/",
+  "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#dc2626",
   "theme_color": "#dc2626",
-  "orientation": "portrait-primary",
+  "orientation": "any",
+  "scope": "/",
   "icons": [
     {
       "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23dc2626'/%3E%3Ctext x='256' y='320' font-family='Arial' font-size='200' font-weight='bold' fill='white' text-anchor='middle'%3ERFB%3C/text%3E%3Ctext x='256' y='380' font-family='Arial' font-size='60' fill='white' text-anchor='middle'%3EINV%3C/text%3E%3C/svg%3E",
@@ -19,7 +20,101 @@
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23dc2626'/%3E%3Ctext x='256' y='320' font-family='Arial' font-size='200' font-weight='bold' fill='white' text-anchor='middle'%3ERFB%3C/text%3E%3C/svg%3E",
+      "sizes": "72x72",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23dc2626'/%3E%3Ctext x='256' y='320' font-family='Arial' font-size='200' font-weight='bold' fill='white' text-anchor='middle'%3ERFB%3C/text%3E%3C/svg%3E",
+      "sizes": "96x96",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23dc2626'/%3E%3Ctext x='256' y='320' font-family='Arial' font-size='200' font-weight='bold' fill='white' text-anchor='middle'%3ERFB%3C/text%3E%3C/svg%3E",
+      "sizes": "128x128",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='144' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23dc2626'/%3E%3Ctext x='256' y='320' font-family='Arial' font-size='200' font-weight='bold' fill='white' text-anchor='middle'%3ERFB%3C/text%3E%3C/svg%3E",
+      "sizes": "144x144",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='152' height='152' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23dc2626'/%3E%3Ctext x='256' y='320' font-family='Arial' font-size='200' font-weight='bold' fill='white' text-anchor='middle'%3ERFB%3C/text%3E%3C/svg%3E",
+      "sizes": "152x152",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='384' height='384' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23dc2626'/%3E%3Ctext x='256' y='320' font-family='Arial' font-size='200' font-weight='bold' fill='white' text-anchor='middle'%3ERFB%3C/text%3E%3C/svg%3E",
+      "sizes": "384x384",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ],
-  "categories": ["business", "productivity"]
+  "categories": ["business", "productivity", "finance"],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='540' height='720' viewBox='0 0 540 720'%3E%3Crect width='540' height='720' fill='%23f3f4f6'/%3E%3Crect x='20' y='20' width='500' height='680' fill='white' rx='10'/%3E%3Crect x='40' y='40' width='460' height='80' fill='%23dc2626' rx='8'/%3E%3Ctext x='270' y='90' font-family='Arial' font-size='32' font-weight='bold' fill='white' text-anchor='middle'%3ERFB Dashboard%3C/text%3E%3C/svg%3E",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View dashboard",
+      "url": "/dashboard",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 24 24' fill='none' stroke='%23dc2626' stroke-width='2'%3E%3Crect x='3' y='3' width='7' height='7'/%3E%3Crect x='14' y='3' width='7' height='7'/%3E%3Crect x='14' y='14' width='7' height='7'/%3E%3Crect x='3' y='14' width='7' height='7'/%3E%3C/svg%3E",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Add Recipe",
+      "short_name": "Recipe",
+      "description": "Add new recipe",
+      "url": "/recipes",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 24 24' fill='none' stroke='%23dc2626' stroke-width='2'%3E%3Cpath d='M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z'/%3E%3Cline x1='6' y1='17' x2='18' y2='17'/%3E%3C/svg%3E",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Production",
+      "short_name": "Production",
+      "description": "Track production",
+      "url": "/production",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 24 24' fill='none' stroke='%23dc2626' stroke-width='2'%3E%3Crect x='2' y='6' width='20' height='8' rx='1'/%3E%3Cpath d='M17 14v7'/%3E%3Cpath d='M7 14v7'/%3E%3Cpath d='M17 3v3'/%3E%3Cpath d='M7 3v3'/%3E%3C/svg%3E",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
 }
