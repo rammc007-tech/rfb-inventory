@@ -119,10 +119,14 @@ export async function getPendingActions(): Promise<any[]> {
   return new Promise((resolve, reject) => {
     const transaction = database.transaction('offline_queue', 'readonly')
     const store = transaction.objectStore('offline_queue')
-    const index = store.index('synced')
-    const request = index.getAll(false)
+    const request = store.getAll()
     
-    request.onsuccess = () => resolve(request.result || [])
+    request.onsuccess = () => {
+      const allItems = request.result || []
+      // Filter for unsynced items
+      const pendingItems = allItems.filter((item: any) => !item.synced)
+      resolve(pendingItems)
+    }
     request.onerror = () => reject(request.error)
   })
 }
