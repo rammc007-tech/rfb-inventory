@@ -24,6 +24,15 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  /* Prevent pull-to-refresh on desktop */
+  overscroll-behavior-y: contain;
+}
+
+/* Enable smooth pull-to-refresh on mobile */
+@media (max-width: 1024px) {
+  body {
+    overscroll-behavior-y: none;
+  }
 }
 
 @layer utilities {
@@ -32,251 +41,245 @@ body {
   }
 }
 
-/* Mobile and Tablet Responsive Utilities */
-@media (max-width: 640px) {
-  .mobile-hidden {
-    display: none !important;
+/* Primary color */
+@layer base {
+  :root {
+    --primary-50: #fef2f2;
+    --primary-100: #fee2e2;
+    --primary-200: #fecaca;
+    --primary-300: #fca5a5;
+    --primary-400: #f87171;
+    --primary-500: #ef4444;
+    --primary-600: #dc2626;
+    --primary-700: #b91c1c;
+    --primary-800: #991b1b;
+    --primary-900: #7f1d1d;
   }
 }
 
-@media (min-width: 641px) and (max-width: 1024px) {
-  .tablet-hidden {
-    display: none !important;
-  }
-}
+/* Primary color classes */
+.bg-primary-50 { background-color: var(--primary-50); }
+.bg-primary-100 { background-color: var(--primary-100); }
+.bg-primary-200 { background-color: var(--primary-200); }
+.bg-primary-300 { background-color: var(--primary-300); }
+.bg-primary-400 { background-color: var(--primary-400); }
+.bg-primary-500 { background-color: var(--primary-500); }
+.bg-primary-600 { background-color: var(--primary-600); }
+.bg-primary-700 { background-color: var(--primary-700); }
+.bg-primary-800 { background-color: var(--primary-800); }
+.bg-primary-900 { background-color: var(--primary-900); }
 
-/* Login page animations */
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
-}
+.text-primary-50 { color: var(--primary-50); }
+.text-primary-100 { color: var(--primary-100); }
+.text-primary-200 { color: var(--primary-200); }
+.text-primary-300 { color: var(--primary-300); }
+.text-primary-400 { color: var(--primary-400); }
+.text-primary-500 { color: var(--primary-500); }
+.text-primary-600 { color: var(--primary-600); }
+.text-primary-700 { color: var(--primary-700); }
+.text-primary-800 { color: var(--primary-800); }
+.text-primary-900 { color: var(--primary-900); }
 
-.animate-shake {
-  animation: shake 0.5s ease-in-out;
-}
+.border-primary-600 { border-color: var(--primary-600); }
+.ring-primary-500 { --tw-ring-color: var(--primary-500); }
 
-/* Touch-friendly buttons on mobile */
-@media (max-width: 768px) {
-  button, a {
-    min-height: 44px;
-    min-width: 44px;
-  }
-}
+.hover\:bg-primary-700:hover { background-color: var(--primary-700); }
+.hover\:bg-primary-100:hover { background-color: var(--primary-100); }
+.hover\:text-primary-600:hover { color: var(--primary-600); }
 
+.focus\:ring-primary-500:focus { --tw-ring-color: var(--primary-500); }
+
+/* Print styles */
 @media print {
-  /* Hide all non-print elements */
   .no-print {
     display: none !important;
   }
   
-  /* Reset body for print */
   body {
-    background: white !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    background: white;
   }
   
-  /* Hide sidebar, navigation, headers */
-  header,
-  nav,
-  aside,
-  .sidebar,
-  [class*="sidebar"],
-  [class*="Sidebar"] {
+  .print\:block {
+    display: block !important;
+  }
+  
+  .print\:hidden {
     display: none !important;
   }
   
-  /* Hide all forms, inputs, buttons, search bars */
-  input,
-  select,
-  button,
-  form,
-  .search-bar,
-  [class*="search"],
-  [class*="filter"],
-  [class*="Search"],
-  [class*="Filter"] {
-    display: none !important;
+  .print\:text-xs {
+    font-size: 0.75rem !important;
   }
   
-  /* Hide empty spaces and containers */
-  .space-y-6 > *:empty,
-  .space-y-4 > *:empty,
-  div:empty,
-  .gap-4:empty,
-  .gap-2:empty {
-    display: none !important;
-    height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
+  .print\:py-2 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
   }
   
-  /* Remove all shadows */
-  .shadow,
-  .shadow-lg,
-  .shadow-xl,
-  .shadow-sm {
+  .print\:mb-2 {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .print\:shadow-none {
     box-shadow: none !important;
   }
   
-  /* White background only */
-  .bg-white,
-  .bg-gray-50,
-  .bg-gray-100,
-  .bg-blue-50 {
-    background-color: white !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  
-  /* Remove borders except table */
-  .border,
-  .border-gray-200,
-  .border-gray-300,
-  .border-b,
-  .border-b-2 {
-    border: none !important;
-  }
-  
-  /* Table styling for print */
-  table {
-    border-collapse: collapse !important;
-    width: 100% !important;
-    margin: 0 !important;
-  }
-  
-  th, td {
-    border: 1px solid #000 !important;
-    padding: 6px 8px !important;
-  }
-  
-  thead {
-    background-color: #f3f4f6 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  
-  /* Shop name header - only show shop name, no other text */
-  [class*="print:block"] {
-    text-align: center !important;
-    margin: 0 0 10px 0 !important;
-    padding: 8px 0 !important;
-    border-bottom: 2px solid #000 !important;
-  }
-  
-  [class*="print:block"] h3 {
-    text-align: center !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    font-size: 22px !important;
-    font-weight: bold !important;
-    color: #dc2626 !important;
-    line-height: 1.2 !important;
-  }
-  
-  /* Hide any paragraphs, spans, or other text in print header - ONLY shop name shows */
-  [class*="print:block"] p,
-  [class*="print:block"] span,
-  [class*="print:block"] > *:not(h3) {
-    display: none !important;
-  }
-  
-  /* Ensure no extra spacing around shop name */
-  [class*="print:block"]::before,
-  [class*="print:block"]::after {
-    content: none !important;
+  .print\:space-y-0 > * + * {
+    margin-top: 0 !important;
   }
 
-  /* Print text size classes */
-  .print-small {
-    font-size: 10px !important;
+  .print\:border {
+    border: 1px solid #e5e7eb !important;
   }
 
-  .print-medium {
-    font-size: 12px !important;
+  .print\:p-4 {
+    padding: 1rem !important;
   }
-  
-  /* Production Logs Print Styling */
+
+  .print\:mt-4 {
+    margin-top: 1rem !important;
+  }
+
   .print\:break-inside-avoid {
-    page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
-  
-  .print\:page-break-inside-avoid {
-    page-break-inside: avoid !important;
-  }
-  
-  /* Ensure tables don't break across pages */
-  table {
-    page-break-inside: auto !important;
-  }
-  
-  tr {
-    page-break-inside: avoid !important;
-    page-break-after: auto !important;
-  }
-  
-  thead {
-    display: table-header-group !important;
-  }
-  
-  tfoot {
-    display: table-footer-group !important;
+
+  .print\:page-break-before {
+    page-break-before: always !important;
   }
 
-  .print-large {
-    font-size: 14px !important;
+  @page {
+    margin: 1cm;
+    size: A4;
+  }
+
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+}
+
+/* Animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  button, a, input, select {
+    min-height: 44px;
+    min-width: 44px;
   }
   
-  /* Ensure all numbers and text are visible in print */
+  /* Prevent text selection on buttons */
+  button {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Smooth scrolling */
   * {
-    color: #000 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    -webkit-overflow-scrolling: touch;
   }
-  
-  /* Ensure font sizes are maintained */
-  span, p, div, td, th {
-    font-size: inherit !important;
-    color: #000 !important;
+}
+
+/* PWA safe areas for notched devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
   }
-  
-  /* Remove all spacing and gaps */
-  .space-y-6,
-  .space-y-4,
-  .space-y-2 {
-    margin: 0 !important;
-    padding: 0 !important;
-    gap: 0 !important;
+}
+
+/* Prevent zoom on input focus (iOS) */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
   }
-  
-  /* Hide main layout padding and margins */
-  main,
-  .p-4,
-  .p-6,
-  [class*="p-"],
-  [class*="m-"] {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-  
-  /* Hide everything except table container */
-  .space-y-6 > *:not(:has(table)):not([class*="print:block"]) {
-    display: none !important;
-  }
-  
-  /* Show only table container with shop name */
-  div:has(table) {
-    display: block !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    page-break-inside: avoid !important;
-  }
-  
-  /* Shop name container - remove all spacing around */
-  [class*="print:block"] {
-    margin-top: 0 !important;
-    margin-bottom: 10px !important;
-  }
+}
+
+/* Loading spinner */
+.loading-spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--primary-600);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+/* Offline mode styles */
+.offline-mode {
+  filter: grayscale(0.3);
+  opacity: 0.95;
+}
+
+.offline-badge {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 9999;
+  background: #f59e0b;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

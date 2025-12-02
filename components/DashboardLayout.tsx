@@ -25,6 +25,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext'
 import ShopLogo from '@/components/ShopLogo'
 import { InstallButton } from '@/components/InstallPWA'
+import PullToRefresh from '@/components/PullToRefresh'
 import useSWR from 'swr'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
@@ -54,7 +55,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname()
   const router = useRouter()
   const { user, logout, isAuthenticated } = useAuth()
-  const { data: shopSettings } = useSWR('/api/settings', fetcher)
+  const { data: shopSettings, mutate: mutateSettings } = useSWR('/api/settings', fetcher)
+
+  // Handle pull-to-refresh
+  const handleRefresh = async () => {
+    try {
+      // Refresh all data
+      await mutateSettings()
+      
+      // Dispatch event to refresh page-specific data
+      window.dispatchEvent(new CustomEvent('refresh-data'))
+      
+      // Small delay for user feedback
+      await new Promise(resolve => setTimeout(resolve, 500))
+    } catch (error) {
+      console.error('Refresh error:', error)
+    }
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -106,6 +123,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Pull to Refresh */}
+      <PullToRefresh onRefresh={handleRefresh} />
+      
       {/* Mobile Header */}
       <div className="lg:hidden bg-white shadow-sm border-b border-gray-200 no-print">
         <div className="flex items-center justify-between p-4">
