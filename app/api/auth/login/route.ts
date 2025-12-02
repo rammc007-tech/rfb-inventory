@@ -9,7 +9,25 @@ export async function POST(request: NextRequest) {
   try {
     console.log('Login attempt started')
     
-    const body = await request.json()
+    // Parse request body with proper error handling
+    let body;
+    try {
+      const text = await request.text()
+      console.log('Request body text:', text)
+      body = text ? JSON.parse(text) : {}
+    } catch (parseError: any) {
+      console.error('JSON parse error:', parseError)
+      return NextResponse.json(
+        { error: 'Invalid request format' },
+        { 
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+          },
+        }
+      )
+    }
+
     const { username, password } = body
 
     console.log('Received login request for:', username)
@@ -17,7 +35,12 @@ export async function POST(request: NextRequest) {
     if (!username || !password) {
       return NextResponse.json(
         { error: 'Username and password are required' },
-        { status: 400 }
+        { 
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+          },
+        }
       )
     }
 
@@ -26,7 +49,12 @@ export async function POST(request: NextRequest) {
       console.error('Prisma client is not initialized')
       return NextResponse.json(
         { error: 'Database connection error. Please restart the server.' },
-        { status: 500 }
+        { 
+          status: 500,
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+          },
+        }
       )
     }
 
@@ -161,20 +189,36 @@ export async function POST(request: NextRequest) {
     )
 
     console.log('Token generated, returning response')
-    return NextResponse.json({
-      token,
-      user: {
-        id: user.id,
-        username: user.username,
-        role: user.role,
+    
+    // Return with proper headers
+    return NextResponse.json(
+      {
+        token,
+        user: {
+          id: user.id,
+          username: user.username,
+          role: user.role,
+        },
       },
-    })
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'no-store, must-revalidate',
+        },
+      }
+    )
   } catch (error: any) {
     console.error('Login error:', error)
     console.error('Error stack:', error.stack)
     return NextResponse.json(
       { error: error.message || 'Login failed. Please check console for details.' },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      }
     )
   }
 }
