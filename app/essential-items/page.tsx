@@ -130,23 +130,22 @@ export default function EssentialItemsPage() {
   }
 
   const handleDeleteMaterial = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this item from essential items? The material will still exist but won\'t be marked as essential.')) {
+    if (!confirm('Are you sure you want to delete this essential item?')) {
       return
     }
 
     try {
-      // Just remove essential flag instead of deleting
+      // Delete the item
       const res = await fetch(`/api/raw-materials/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isEssential: false }),
+        method: 'DELETE',
       })
       if (res.ok) {
-        mutate()
-        alert('Item removed from essential items successfully!')
+        // Immediate update
+        await mutate()
+        alert('Essential item deleted successfully!')
       } else {
         const error = await res.json()
-        alert(error.error || 'Failed to remove from essential items')
+        alert(error.error || 'Failed to delete essential item')
       }
     } catch (error) {
       alert('Failed to remove from essential items')

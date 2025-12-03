@@ -12,11 +12,24 @@ export default function DeletedItemsPage() {
   const { data: deletedItems, mutate } = useSWR('/api/deleted-items', fetcher, {
     revalidateOnFocus: true,
     revalidateOnReconnect: true,
-    refreshInterval: 500, // Faster refresh - 500ms
-    dedupingInterval: 0, // No deduplication for immediate updates
+    refreshInterval: 300, // Very fast refresh - 300ms
+    dedupingInterval: 0, // No deduplication
+    revalidateOnMount: true, // Always revalidate on mount
   })
   const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState<string>('all')
+  
+  // Auto-refresh when page becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        mutate() // Refresh when page becomes visible
+      }
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [mutate])
 
   const categoryOptions = [
     { value: 'all', label: 'All' },
