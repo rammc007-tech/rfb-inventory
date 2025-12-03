@@ -17,11 +17,18 @@ export default function DeletedItemsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState<string>('all')
 
-  const categories = ['all', 'raw_material', 'essential_item', 'recipe', 'packing_material', 'purchase', 'packing_purchase', 'production_log']
+  const categories = ['all', 'raw_material', 'essential_item', 'recipe', 'purchase', 'production_log']
 
   const filteredItems = Array.isArray(deletedItems)
     ? deletedItems.filter((item: any) => {
-        const matchesCategory = filterCategory === 'all' || item.category === filterCategory
+        // Normalize category for comparison
+        const itemCategory = (item.category || '').toLowerCase().replace(/\s+/g, '_')
+        const filterCat = filterCategory.toLowerCase().replace(/\s+/g, '_')
+        
+        const matchesCategory = filterCategory === 'all' || 
+                               itemCategory === filterCat ||
+                               item.category === filterCategory
+        
         const matchesSearch = !searchTerm || 
                              item.originalData?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                              item.originalData?.rawMaterialName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
