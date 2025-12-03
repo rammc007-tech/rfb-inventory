@@ -899,7 +899,7 @@ export default function PurchasesPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredPurchases.map((purchase: any) => (
                 <tr key={purchase.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" suppressHydrationWarning>
                     {new Date(purchase.purchaseDate).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
