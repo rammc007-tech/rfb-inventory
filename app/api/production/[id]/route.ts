@@ -1,28 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma, reloadDatabase } from '@/lib/prisma'
 
-// DELETE production log
+// DELETE production log - NO PERMISSION CHECK
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // Get user role from request header
-    const userRole = (request.headers.get('x-user-role') || 'user') as 'user' | 'supervisor' | 'admin'
-    
-    // Get access control settings
-    const settings = prisma.shopSettings.findFirst()
-    const accessControl = (settings as any)?.accessControl || {}
-    
-    // Check permission for production_delete
-    const hasPermission = accessControl.production_delete?.[userRole] ?? (userRole === 'admin')
-    
-    if (!hasPermission) {
-      return NextResponse.json(
-        { error: 'Permission denied. You do not have access to delete production logs.' },
-        { status: 403 }
-      )
-    }
+    console.log('🗑️ Delete request for production log:', params.id)
     
     // Soft delete production log
     const productionLog = prisma.productionLog.findUnique({
@@ -30,11 +15,14 @@ export async function DELETE(
     })
     
     if (!productionLog) {
+      console.log('❌ Production log not found:', params.id)
       return NextResponse.json(
         { error: 'Production log not found' },
         { status: 404 }
       )
     }
+    
+    console.log('✓ Production log found, moving to deleted_items')
     
     // Move to deleted_items
     const deletedItem = prisma.deletedItem.create({
@@ -43,25 +31,29 @@ export async function DELETE(
         originalData: productionLog,
       },
     })
-    console.log('Production log moved to deleted_items:', deletedItem.id)
+    console.log('✓ Production log moved to deleted_items:', deletedItem.id)
     
     // Delete from production_logs
     prisma.productionLog.deleteMany({
       where: { id: params.id },
     })
     
+    console.log('✓ Production log deleted successfully')
+    
     // Reload database to ensure consistency
     if (typeof reloadDatabase === 'function') {
       reloadDatabase()
     }
 
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error deleting production log:', error)
+    return NextResponse.json({ 
+      success: true,
+      message: 'Production log deleted successfully'
+    })
+  } catch (error: any) {
+    console.error('❌ Error deleting production log:', error)
     return NextResponse.json(
-      { error: 'Failed to delete production log' },
+      { error: error.message || 'Failed to delete production log' },
       { status: 500 }
     )
   }
 }
-

@@ -151,28 +151,13 @@ export async function PUT(
   }
 }
 
-// DELETE recipe
+// DELETE recipe - NO PERMISSION CHECK
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // Get user role from request header
-    const userRole = (request.headers.get('x-user-role') || 'user') as 'user' | 'supervisor' | 'admin'
-    
-    // Get access control settings
-    const settings = prisma.shopSettings.findFirst()
-    const accessControl = (settings as any)?.accessControl || {}
-    
-    // Check permission for recipes_delete
-    const hasPermission = accessControl.recipes_delete?.[userRole] ?? (userRole === 'admin')
-    
-    if (!hasPermission) {
-      return NextResponse.json(
-        { error: 'Permission denied. You do not have access to delete recipes.' },
-        { status: 403 }
-      )
-    }
+    console.log('🗑️ Delete request for recipe:', params.id)
     
     // Get recipe with ingredients before deleting
     const recipe = prisma.recipe.findUnique({
@@ -183,11 +168,14 @@ export async function DELETE(
     })
     
     if (!recipe) {
+      console.log('❌ Recipe not found:', params.id)
       return NextResponse.json(
         { error: 'Recipe not found' },
         { status: 404 }
       )
     }
+    
+    console.log('✓ Recipe found, moving to deleted_items')
     
     // Move to deleted_items (soft delete)
     const deletedItem = prisma.deletedItem.create({
@@ -196,7 +184,7 @@ export async function DELETE(
         originalData: recipe,
       },
     })
-    console.log('Recipe moved to deleted_items:', deletedItem.id, 'Category:', deletedItem.category)
+    console.log('✓ Recipe moved to deleted_items:', deletedItem.id)
     
     // Delete recipe and its ingredients
     prisma.recipeIngredient.deleteMany({
@@ -207,18 +195,22 @@ export async function DELETE(
       where: { id: params.id },
     })
     
+    console.log('✓ Recipe deleted successfully')
+    
     // Reload database to ensure consistency
     if (typeof reloadDatabase === 'function') {
       reloadDatabase()
     }
 
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error deleting recipe:', error)
+    return NextResponse.json({ 
+      success: true,
+      message: 'Recipe deleted successfully'
+    })
+  } catch (error: any) {
+    console.error('❌ Error deleting recipe:', error)
     return NextResponse.json(
-      { error: 'Failed to delete recipe' },
+      { error: error.message || 'Failed to delete recipe' },
       { status: 500 }
     )
   }
 }
-
