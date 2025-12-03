@@ -222,7 +222,7 @@ export default function DeletedItemsPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {item.category.replace('_', ' ')}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" suppressHydrationWarning>
                     {format(new Date(item.deletedAt), 'MMM dd, yyyy HH:mm')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
