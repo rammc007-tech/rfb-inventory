@@ -17,7 +17,15 @@ export default function DeletedItemsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState<string>('all')
 
-  const categories = ['all', 'raw_material', 'essential_item', 'recipe', 'purchase', 'production_log']
+  // Category list with proper display names
+  const categoryOptions = [
+    { value: 'all', label: 'All' },
+    { value: 'raw_material', label: 'Raw Material' },
+    { value: 'essential_item', label: 'Essential Item' },
+    { value: 'recipe', label: 'Recipe' },
+    { value: 'purchase', label: 'Purchase' },
+    { value: 'production_log', label: 'Production Log' },
+  ]
 
   const filteredItems = Array.isArray(deletedItems)
     ? deletedItems.filter((item: any) => {
@@ -142,31 +150,19 @@ export default function DeletedItemsPage() {
                 Filter by Category
               </label>
               <div className="flex flex-wrap gap-2">
-                {categories.map((cat) => {
-                  let displayName = cat
-                  if (cat === 'all') displayName = 'All'
-                  else if (cat === 'raw_material') displayName = 'Raw Material'
-                  else if (cat === 'essential_item') displayName = 'Essential Item'
-                  else if (cat === 'recipe') displayName = 'Recipe'
-                  else if (cat === 'packing_material') displayName = 'Packing Material'
-                  else if (cat === 'purchase') displayName = 'Purchase'
-                  else if (cat === 'packing_purchase') displayName = 'Packing Purchase'
-                  else if (cat === 'production_log') displayName = 'Production Log'
-                  
-                  return (
-                    <button
-                      key={cat}
-                      onClick={() => setFilterCategory(cat)}
-                      className={`px-3 py-1 rounded-lg text-sm ${
-                        filterCategory === cat
-                          ? 'bg-primary-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {displayName}
-                    </button>
-                  )
-                })}
+                {categoryOptions.map((cat) => (
+                  <button
+                    key={cat.value}
+                    onClick={() => setFilterCategory(cat.value)}
+                    className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                      filterCategory === cat.value
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
               </div>
             </div>
             <div>
