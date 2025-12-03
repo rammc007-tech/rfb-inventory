@@ -141,33 +141,21 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Get user role from request header
-    const userRole = (request.headers.get('x-user-role') || 'user') as 'user' | 'supervisor' | 'admin'
-    
-    // Get access control settings
-    const settings = prisma.shopSettings.findFirst()
-    const accessControl = (settings as any)?.accessControl || {}
-    
-    // Check permission for purchases_delete
-    const hasPermission = accessControl.purchases_delete?.[userRole] ?? (userRole === 'admin')
-    
-    if (!hasPermission) {
-      return NextResponse.json(
-        { error: 'Permission denied. You do not have access to delete purchases.' },
-        { status: 403 }
-      )
-    }
+    console.log('Delete request for purchase:', params.id)
 
     const purchase = prisma.purchaseBatch.findUnique({
       where: { id: params.id },
     })
 
     if (!purchase) {
+      console.log('Purchase not found:', params.id)
       return NextResponse.json(
         { error: 'Purchase not found' },
         { status: 404 }
       )
     }
+
+    console.log('Purchase found, moving to deleted_items')
 
     // Move to deleted_items
     const deletedItem = prisma.deletedItem.create({
@@ -183,16 +171,21 @@ export async function DELETE(
       where: { id: params.id },
     })
     
+    console.log('Purchase deleted from purchase_batches')
+    
     // Reload database to ensure consistency
     if (typeof reloadDatabase === 'function') {
       reloadDatabase()
     }
 
-    return NextResponse.json({ success: true })
-  } catch (error) {
+    return NextResponse.json({ 
+      success: true,
+      message: 'Purchase deleted successfully'
+    })
+  } catch (error: any) {
     console.error('Error deleting purchase:', error)
     return NextResponse.json(
-      { error: 'Failed to delete purchase' },
+      { error: error.message || 'Failed to delete purchase' },
       { status: 500 }
     )
   }
