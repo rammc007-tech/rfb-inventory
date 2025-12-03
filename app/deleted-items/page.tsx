@@ -9,12 +9,14 @@ import { format } from 'date-fns'
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function DeletedItemsPage() {
-  const { data: deletedItems, mutate } = useSWR('/api/deleted-items', fetcher, {
+  const { data: deletedItems, mutate, isLoading } = useSWR('/api/deleted-items', fetcher, {
     revalidateOnFocus: true,
     revalidateOnReconnect: true,
-    refreshInterval: 300, // Very fast refresh - 300ms
-    dedupingInterval: 0, // No deduplication
-    revalidateOnMount: true, // Always revalidate on mount
+    refreshInterval: 200, // Super fast - 200ms
+    dedupingInterval: 0, // No deduplication for instant updates
+    revalidateOnMount: true, // Always fresh data on mount
+    refreshWhenHidden: false, // Don't refresh when tab hidden
+    refreshWhenOffline: false,
   })
   const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState<string>('all')
@@ -23,12 +25,25 @@ export default function DeletedItemsPage() {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden) {
+        console.log('Tab visible - refreshing deleted items')
         mutate() // Refresh when page becomes visible
       }
     }
     
     document.addEventListener('visibilitychange', handleVisibilityChange)
+    
+    // Also refresh on mount
+    mutate()
+    
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [mutate])
+  
+  // Force refresh every time component mounts
+  useEffect(() => {
+    const interval = setInterval(() => {
+      mutate()
+    }, 200)
+    return () => clearInterval(interval)
   }, [mutate])
 
   const categoryOptions = [

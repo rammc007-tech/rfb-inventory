@@ -155,32 +155,48 @@ export async function DELETE(
       )
     }
 
-    console.log('Purchase found, moving to deleted_items')
+    // Get material name for better display
+    let materialName = 'Unknown Material'
+    if (purchase.rawMaterialId) {
+      const material = prisma.rawMaterial.findUnique({
+        where: { id: purchase.rawMaterialId },
+      })
+      materialName = material?.name || 'Unknown Material'
+    }
 
-    // Move to deleted_items
+    console.log('Purchase found:', materialName, 'moving to deleted_items')
+
+    // Create enriched data for deleted_items
+    const enrichedPurchase = {
+      ...purchase,
+      rawMaterialName: materialName,
+    }
+
+    // Move to deleted_items with material name
     const deletedItem = prisma.deletedItem.create({
       data: {
         category: 'purchase',
-        originalData: purchase,
+        originalData: enrichedPurchase,
       },
     })
-    console.log('Purchase moved to deleted_items:', deletedItem.id)
+    console.log('Purchase moved to deleted_items:', deletedItem.id, materialName)
 
     // Delete from purchase_batches
     prisma.purchaseBatch.delete({
       where: { id: params.id },
     })
     
-    console.log('Purchase deleted from purchase_batches')
+    console.log('Purchase deleted successfully')
     
-    // Reload database to ensure consistency
+    // Force reload database
     if (typeof reloadDatabase === 'function') {
       reloadDatabase()
     }
 
     return NextResponse.json({ 
       success: true,
-      message: 'Purchase deleted successfully'
+      message: 'Purchase deleted successfully',
+      materialName: materialName
     })
   } catch (error: any) {
     console.error('Error deleting purchase:', error)
