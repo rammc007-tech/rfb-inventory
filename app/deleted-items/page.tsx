@@ -16,12 +16,6 @@ export default function DeletedItemsPage() {
   })
   const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState<string>('all')
-  const [mounted, setMounted] = useState(false)
-
-  // Set mounted state
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   // Category list with proper display names
   const categoryOptions = [
@@ -150,7 +144,7 @@ export default function DeletedItemsPage() {
                 Filter by Category
               </label>
               <div className="flex flex-wrap gap-2">
-                {mounted && categoryOptions.map((cat) => (
+                {categoryOptions.map((cat) => (
                   <button
                     key={cat.value}
                     onClick={() => setFilterCategory(cat.value)}
@@ -159,17 +153,10 @@ export default function DeletedItemsPage() {
                         ? 'bg-primary-600 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
+                    suppressHydrationWarning
                   >
                     {cat.label}
                   </button>
-                ))}
-                {!mounted && categoryOptions.map((cat) => (
-                  <div
-                    key={cat.value}
-                    className="px-3 py-1 rounded-lg text-sm font-medium bg-gray-100 text-gray-700"
-                  >
-                    {cat.label}
-                  </div>
                 ))}
               </div>
             </div>
