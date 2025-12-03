@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import DashboardLayout from '@/components/DashboardLayout'
 import { Trash2, RotateCcw, X, Search, Filter } from 'lucide-react'
 import useSWR from 'swr'
@@ -12,10 +12,16 @@ export default function DeletedItemsPage() {
   const { data: deletedItems, mutate } = useSWR('/api/deleted-items', fetcher, {
     revalidateOnFocus: true,
     revalidateOnReconnect: true,
-    refreshInterval: 2000, // Refresh every 2 seconds
+    refreshInterval: 2000,
   })
   const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState<string>('all')
+  const [mounted, setMounted] = useState(false)
+
+  // Set mounted state
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Category list with proper display names
   const categoryOptions = [
@@ -44,12 +50,6 @@ export default function DeletedItemsPage() {
         return matchesCategory && matchesSearch
       })
     : []
-
-  // Debug log
-  if (typeof window !== 'undefined') {
-    console.log('Deleted items from API:', deletedItems)
-    console.log('Filtered items:', filteredItems)
-  }
 
   const handleRestore = async (id: string) => {
     if (!confirm('Are you sure you want to restore this item?')) return
@@ -150,7 +150,7 @@ export default function DeletedItemsPage() {
                 Filter by Category
               </label>
               <div className="flex flex-wrap gap-2">
-                {categoryOptions.map((cat) => (
+                {mounted && categoryOptions.map((cat) => (
                   <button
                     key={cat.value}
                     onClick={() => setFilterCategory(cat.value)}
@@ -162,6 +162,14 @@ export default function DeletedItemsPage() {
                   >
                     {cat.label}
                   </button>
+                ))}
+                {!mounted && categoryOptions.map((cat) => (
+                  <div
+                    key={cat.value}
+                    className="px-3 py-1 rounded-lg text-sm font-medium bg-gray-100 text-gray-700"
+                  >
+                    {cat.label}
+                  </div>
                 ))}
               </div>
             </div>
