@@ -12,12 +12,12 @@ export default function DeletedItemsPage() {
   const { data: deletedItems, mutate } = useSWR('/api/deleted-items', fetcher, {
     revalidateOnFocus: true,
     revalidateOnReconnect: true,
-    refreshInterval: 2000,
+    refreshInterval: 500, // Faster refresh - 500ms
+    dedupingInterval: 0, // No deduplication for immediate updates
   })
   const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState<string>('all')
 
-  // Category list with proper display names
   const categoryOptions = [
     { value: 'all', label: 'All' },
     { value: 'raw_material', label: 'Raw Material' },

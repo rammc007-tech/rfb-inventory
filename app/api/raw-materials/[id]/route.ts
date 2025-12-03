@@ -76,26 +76,37 @@ export async function DELETE(
       )
     }
 
+    // Determine category based on isEssential flag
+    const category = material.isEssential ? 'essential_item' : 'raw_material'
+    
+    console.log(`Deleting ${category}:`, material.name)
+    
     // Move to deleted_items
     const deletedItem = prisma.deletedItem.create({
       data: {
-        category: 'raw_material',
+        category: category,
         originalData: material,
       },
     })
-    console.log('Raw material moved to deleted_items:', deletedItem.id)
+    console.log(`${category} moved to deleted_items:`, deletedItem.id, material.name)
 
     // Delete from raw_materials
     prisma.rawMaterial.delete({
       where: { id: params.id },
     })
     
+    console.log('Item deleted successfully')
+    
     // Reload database to ensure consistency
     if (typeof reloadDatabase === 'function') {
       reloadDatabase()
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ 
+      success: true,
+      message: 'Item deleted successfully',
+      category: category
+    })
   } catch (error) {
     console.error('Error deleting material:', error)
     return NextResponse.json(
