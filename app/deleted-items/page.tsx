@@ -17,7 +17,7 @@ export default function DeletedItemsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState<string>('all')
 
-  const categories = ['all', 'raw_material', 'recipe', 'packing_material', 'purchase', 'packing_purchase', 'production_log']
+  const categories = ['all', 'raw_material', 'essential_item', 'recipe', 'packing_material', 'purchase', 'packing_purchase', 'production_log']
 
   const filteredItems = Array.isArray(deletedItems)
     ? deletedItems.filter((item: any) => {
@@ -135,19 +135,31 @@ export default function DeletedItemsPage() {
                 Filter by Category
               </label>
               <div className="flex flex-wrap gap-2">
-                {categories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setFilterCategory(cat)}
-                    className={`px-3 py-1 rounded-lg text-sm ${
-                      filterCategory === cat
-                        ? 'bg-primary-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {cat === 'all' ? 'All' : cat.replace('_', ' ')}
-                  </button>
-                ))}
+                {categories.map((cat) => {
+                  let displayName = cat
+                  if (cat === 'all') displayName = 'All'
+                  else if (cat === 'raw_material') displayName = 'Raw Material'
+                  else if (cat === 'essential_item') displayName = 'Essential Item'
+                  else if (cat === 'recipe') displayName = 'Recipe'
+                  else if (cat === 'packing_material') displayName = 'Packing Material'
+                  else if (cat === 'purchase') displayName = 'Purchase'
+                  else if (cat === 'packing_purchase') displayName = 'Packing Purchase'
+                  else if (cat === 'production_log') displayName = 'Production Log'
+                  
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => setFilterCategory(cat)}
+                      className={`px-3 py-1 rounded-lg text-sm ${
+                        filterCategory === cat
+                          ? 'bg-primary-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {displayName}
+                    </button>
+                  )
+                })}
               </div>
             </div>
             <div>
