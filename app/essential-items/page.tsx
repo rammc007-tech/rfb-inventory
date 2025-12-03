@@ -617,7 +617,7 @@ export default function EssentialItemsPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         ₹{purchase.totalCost.toFixed(2)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" suppressHydrationWarning>
                         {new Date(purchase.purchaseDate).toLocaleDateString()}
                       </td>
                     </tr>
