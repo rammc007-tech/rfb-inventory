@@ -54,6 +54,10 @@ export default function DeletedItemsPage() {
     if (!confirm('Are you sure you want to restore this item?')) return
 
     try {
+      // Optimistic update - remove from deleted items immediately
+      const updatedItems = deletedItems?.filter((item: any) => item.id !== id)
+      await mutate(updatedItems, false)
+      
       const res = await fetch('/api/deleted-items', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -61,12 +65,28 @@ export default function DeletedItemsPage() {
       })
 
       if (res.ok) {
-        mutate()
+        const result = await res.json()
+        
+        // Trigger refresh on appropriate pages
+        window.dispatchEvent(new CustomEvent('data-restored', { 
+          detail: { id, category: result.category } 
+        }))
+        window.dispatchEvent(new CustomEvent('raw-material-updated'))
+        window.dispatchEvent(new CustomEvent('essential-item-updated'))
+        
+        // Final revalidate
+        await mutate()
+        
+        console.log('✅ Item restored and pages notified')
         alert('Item restored successfully!')
       } else {
+        // Revert optimistic update on error
+        await mutate()
         alert('Failed to restore item')
       }
     } catch (error) {
+      // Revert optimistic update on error
+      await mutate()
       alert('Failed to restore item')
     }
   }
