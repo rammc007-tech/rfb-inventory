@@ -6,8 +6,7 @@ import { Factory, Plus, X, Printer, Filter, Calendar, BarChart3, ChevronDown, Ch
 import useSWR from 'swr'
 import { useSearchParams } from 'next/navigation'
 import { startOfWeek, startOfMonth, endOfWeek, endOfMonth, format } from 'date-fns'
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
+import { fastFetcher, fastSWRConfig } from '@/lib/fast-fetcher'
 
 // Interactive Production Chart Component
 function ProductionChartComponent({ items }: { items: any[] }) {

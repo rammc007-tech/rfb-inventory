@@ -5,22 +5,10 @@ import DashboardLayout from '@/components/DashboardLayout'
 import { Plus, Package, Search, Filter, Star, Edit, Trash2, Printer } from 'lucide-react'
 import useSWR from 'swr'
 import { getUserRole } from '@/lib/access-control'
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
+import { fastFetcher, fastSWRConfig } from '@/lib/fast-fetcher'
 
 export default function RawMaterialsPage() {
-  const { data: materials, error, isLoading, mutate } = useSWR('/api/raw-materials', fetcher, {
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-    dedupingInterval: 0,
-    refreshInterval: 0,
-    errorRetryCount: 3,
-    errorRetryInterval: 1000,
-    onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
-      if (retryCount >= 3) return
-      setTimeout(() => revalidate({ retryCount }), 1000)
-    },
-  })
+  const { data: materials, error, isLoading, mutate } = useSWR('/api/raw-materials', fastFetcher, fastSWRConfig)
   
   // Listen for restore events from deleted items page
   useEffect(() => {

@@ -21,30 +21,7 @@ export default function DeletedItemsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState<string>('all')
   
-  // Auto-refresh when page becomes visible
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        console.log('Tab visible - refreshing deleted items')
-        mutate() // Refresh when page becomes visible
-      }
-    }
-    
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    
-    // Also refresh on mount
-    mutate()
-    
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [mutate])
-  
-  // Force refresh every time component mounts
-  useEffect(() => {
-    const interval = setInterval(() => {
-      mutate()
-    }, 200)
-    return () => clearInterval(interval)
-  }, [mutate])
+  // Removed aggressive auto-refresh for better performance
 
   const categoryOptions = [
     { value: 'all', label: 'All' },

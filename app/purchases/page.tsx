@@ -5,8 +5,7 @@ import DashboardLayout from '@/components/DashboardLayout'
 import { Plus, X, Printer, Filter, Edit, Trash2, Search, Calendar, BarChart3, ChevronDown, ChevronUp, Maximize2, Minimize2 } from 'lucide-react'
 import useSWR from 'swr'
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subWeeks, subMonths } from 'date-fns'
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
+import { fastFetcher, fastSWRConfig } from '@/lib/fast-fetcher'
 
 // Interactive Purchase Chart Component
 function PurchaseChartComponent({ items, materials }: { items: any[], materials: any }) {
