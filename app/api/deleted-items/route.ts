@@ -57,10 +57,17 @@ export async function POST(request: NextRequest) {
     const category = deletedItem.category
 
     // Restore based on category
-    if (category === 'raw_material') {
+    if (category === 'raw_material' || category === 'essential_item') {
+      // Both raw materials and essential items go to raw_materials table
+      const restoreData = { ...originalData }
+      // Ensure isEssential flag is set correctly
+      if (category === 'essential_item') {
+        restoreData.isEssential = true
+      }
       prisma.rawMaterial.create({
-        data: originalData,
+        data: restoreData,
       })
+      console.log(`✅ Restored ${category}:`, restoreData.name)
     } else if (category === 'recipe') {
       // Restore recipe first
       const recipeData = { ...originalData }
@@ -103,8 +110,19 @@ export async function POST(request: NextRequest) {
     prisma.deletedItem.delete({
       where: { id: deletedItemId },
     })
+    
+    // Force database reload
+    if (typeof reloadDatabase === 'function') {
+      reloadDatabase()
+    }
 
-    return NextResponse.json({ message: 'Item restored successfully' })
+    console.log(`✅ Item restored and deleted_item removed: ${deletedItemId}`)
+    
+    return NextResponse.json({ 
+      message: 'Item restored successfully',
+      category: category,
+      success: true
+    })
   } catch (error) {
     console.error('Error restoring deleted item:', error)
     return NextResponse.json(

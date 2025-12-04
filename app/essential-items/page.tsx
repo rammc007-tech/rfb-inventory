@@ -9,11 +9,25 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function EssentialItemsPage() {
   const { data: materials, mutate } = useSWR('/api/raw-materials', fetcher, {
-    revalidateOnFocus: false,
+    revalidateOnFocus: true,
     revalidateOnReconnect: true,
-    dedupingInterval: 2000,
+    dedupingInterval: 0,
+    refreshInterval: 0,
     errorRetryCount: 3,
     errorRetryInterval: 1000,
+  })
+  
+  // Listen for restore events from deleted items page
+  useState(() => {
+    const handleDataRestored = () => {
+      console.log('Essential items: Data restored event received, refreshing...')
+      mutate()
+    }
+    
+    if (typeof window !== 'undefined') {
+      window.addEventListener('data-restored', handleDataRestored)
+      return () => window.removeEventListener('data-restored', handleDataRestored)
+    }
   })
   const { data: purchases } = useSWR('/api/purchases', fetcher, {
     revalidateOnFocus: false,

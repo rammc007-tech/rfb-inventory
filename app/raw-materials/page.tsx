@@ -10,9 +10,10 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function RawMaterialsPage() {
   const { data: materials, error, isLoading, mutate } = useSWR('/api/raw-materials', fetcher, {
-    revalidateOnFocus: false,
+    revalidateOnFocus: true,
     revalidateOnReconnect: true,
-    dedupingInterval: 2000,
+    dedupingInterval: 0,
+    refreshInterval: 0,
     errorRetryCount: 3,
     errorRetryInterval: 1000,
     onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
@@ -20,6 +21,17 @@ export default function RawMaterialsPage() {
       setTimeout(() => revalidate({ retryCount }), 1000)
     },
   })
+  
+  // Listen for restore events from deleted items page
+  useEffect(() => {
+    const handleDataRestored = () => {
+      console.log('Data restored event received, refreshing...')
+      mutate()
+    }
+    
+    window.addEventListener('data-restored', handleDataRestored)
+    return () => window.removeEventListener('data-restored', handleDataRestored)
+  }, [mutate])
   const { data: accessControl } = useSWR('/api/settings/access-control', fetcher)
   const [userRole, setUserRole] = useState<'user' | 'supervisor' | 'admin' | null>(null)
   const [canDelete, setCanDelete] = useState(false)
