@@ -148,6 +148,17 @@ export default function PurchasesPage() {
   
   // Ensure materials is always an array
   const materials = Array.isArray(materialsData) ? materialsData : []
+  
+  // Enrich purchases with material names
+  const enrichedPurchases = Array.isArray(purchases) 
+    ? purchases.map((p: any) => {
+        const material = materials.find((m: any) => m.id === p.rawMaterialId)
+        return {
+          ...p,
+          rawMaterialName: material?.name || p.rawMaterialName || 'Unknown Material',
+        }
+      })
+    : []
   const [showForm, setShowForm] = useState(false)
   const [purchaseItems, setPurchaseItems] = useState<PurchaseItem[]>([
     { materialId: '', quantity: '', unit: 'kg', unitPrice: '', totalCost: '', gasCylinderQty: '' },
