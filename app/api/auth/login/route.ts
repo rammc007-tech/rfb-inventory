@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma, reloadDatabase } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { initializeDatabase } from '@/lib/init-db'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'rfb-inventory-secret-key-change-in-production'
 
@@ -69,6 +70,30 @@ export async function POST(request: NextRequest) {
       const usersArray = Array.isArray(allUsers) ? allUsers : []
       
       console.log('Total users in database:', usersArray.length)
+      
+      // If no users exist, initialize database with default admin
+      if (usersArray.length === 0) {
+        console.log('⚠️ No users found - initializing database...')
+        const initResult = await initializeDatabase()
+        console.log('Database initialization result:', initResult)
+        
+        // Reload and try again
+        reloadDatabase()
+        const allUsersRetry = prisma.user.findMany({})
+        const usersArrayRetry = Array.isArray(allUsersRetry) ? allUsersRetry : []
+        console.log('Users after initialization:', usersArrayRetry.length)
+        
+        if (usersArrayRetry.length > 0) {
+          console.log('✅ Default admin created - please try logging in again')
+          return NextResponse.json(
+            { 
+              error: 'Database initialized with default admin. Please try logging in again.',
+              hint: 'Username: admin, Password: admin123'
+            },
+            { status: 200 }
+          )
+        }
+      }
       console.log('All usernames:', usersArray.map((u: any) => u.username))
       
       // Case-insensitive username matching
