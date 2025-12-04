@@ -291,17 +291,30 @@ export default function PurchasesPage() {
     if (!confirm('Are you sure you want to delete this purchase?')) return
 
     try {
+      // Optimistic update - remove immediately
+      const updatedPurchases = purchases?.filter((p: any) => p.id !== id)
+      await mutate(updatedPurchases, false)
+      
       const res = await fetch(`/api/purchases/${id}`, {
         method: 'DELETE',
       })
 
       if (res.ok) {
-        mutate()
-        alert('Purchase deleted successfully!')
+        // Notify deleted items page
+        window.dispatchEvent(new CustomEvent('purchase-deleted', { detail: { id } }))
+        
+        // Final revalidate
+        await mutate()
+        
+        console.log('✅ Purchase deleted and synced')
       } else {
+        // Revert on error
+        await mutate()
         alert('Failed to delete purchase')
       }
     } catch (error) {
+      // Revert on error
+      await mutate()
       alert('Failed to delete purchase')
     }
   }
