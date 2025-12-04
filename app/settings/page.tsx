@@ -33,16 +33,8 @@ export default function SettingsPage() {
   const [showForgetConfirmPassword, setShowForgetConfirmPassword] = useState(false)
   const [showChangeUserPassword, setShowChangeUserPassword] = useState(false)
   const [showChangeUserConfirmPassword, setShowChangeUserConfirmPassword] = useState(false)
-  const { data: shopSettings, mutate: mutateShop } = useSWR(
-    '/api/settings',
-    fetcher
-  )
-  const { data: usersData, mutate: mutateUsers } = useSWR('/api/users', fetcher, {
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-    refreshInterval: 0,
-    dedupingInterval: 0,
-  })
+  const { data: shopSettings, mutate: mutateShop } = useSWR('/api/settings', fastFetcher, fastSWRConfig)
+  const { data: usersData, mutate: mutateUsers } = useSWR('/api/users', fastFetcher, fastSWRConfig)
   
   // Use local state to ensure UI updates immediately
   const [users, setUsers] = useState<any[]>([])
@@ -80,15 +72,8 @@ export default function SettingsPage() {
       setUsers([])
     }
   }, [usersData])
-  const { data: permissionsData, mutate: mutatePermissions } = useSWR(
-    '/api/settings/permissions',
-    fetcher
-  )
-  
-  const { data: accessControlData, mutate: mutateAccessControl } = useSWR(
-    '/api/settings/access-control',
-    fetcher
-  )
+  const { data: permissionsData, mutate: mutatePermissions } = useSWR('/api/settings/permissions', fastFetcher, fastSWRConfig)
+  const { data: accessControlData, mutate: mutateAccessControl } = useSWR('/api/settings/access-control', fastFetcher, fastSWRConfig)
 
   const [shopForm, setShopForm] = useState({
     shopName: '',

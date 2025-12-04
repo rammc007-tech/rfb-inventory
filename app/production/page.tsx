@@ -127,10 +127,10 @@ interface ProductionVariant {
 function ProductionPageContent() {
   const searchParams = useSearchParams()
   const recipeIdParam = searchParams.get('recipe')
-  const { data: recipes } = useSWR('/api/recipes', fetcher)
-  const { data: materialsData } = useSWR('/api/raw-materials', fetcher)
+  const { data: recipes } = useSWR('/api/recipes', fastFetcher, fastSWRConfig)
+  const { data: materialsData } = useSWR('/api/raw-materials', fastFetcher, fastSWRConfig)
   const materials = Array.isArray(materialsData) ? materialsData : []
-  const { data: productions, mutate } = useSWR('/api/production', fetcher)
+  const { data: productions, mutate } = useSWR('/api/production', fastFetcher, fastSWRConfig)
 
   const [selectedRecipeId, setSelectedRecipeId] = useState(recipeIdParam || '')
   const [batches, setBatches] = useState(1)

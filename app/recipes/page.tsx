@@ -16,9 +16,9 @@ interface RecipeIngredient {
 
 export default function RecipesPage() {
   const router = useRouter()
-  const { data: materialsData } = useSWR('/api/raw-materials', fetcher)
+  const { data: materialsData } = useSWR('/api/raw-materials', fastFetcher, fastSWRConfig)
   const materials = Array.isArray(materialsData) ? materialsData : []
-  const { data: recipes, mutate } = useSWR('/api/recipes', fetcher)
+  const { data: recipes, mutate } = useSWR('/api/recipes', fastFetcher, fastSWRConfig)
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
