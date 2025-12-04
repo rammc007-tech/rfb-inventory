@@ -1,39 +1,25 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import DashboardLayout from '@/components/DashboardLayout'
 import { Star, Package, Search, Filter, Plus, ShoppingCart, Edit, Trash2, Printer } from 'lucide-react'
 import useSWR from 'swr'
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
+import { fastFetcher, fastSWRConfig } from '@/lib/fast-fetcher'
 
 export default function EssentialItemsPage() {
-  const { data: materials, mutate } = useSWR('/api/raw-materials', fetcher, {
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-    dedupingInterval: 0,
-    refreshInterval: 0,
-    errorRetryCount: 3,
-    errorRetryInterval: 1000,
-  })
+  const { data: materials, mutate } = useSWR('/api/raw-materials', fastFetcher, fastSWRConfig)
+  const { data: purchases } = useSWR('/api/purchases', fastFetcher, fastSWRConfig)
   
   // Listen for restore events from deleted items page
-  useState(() => {
+  useEffect(() => {
     const handleDataRestored = () => {
       console.log('Essential items: Data restored event received, refreshing...')
       mutate()
     }
     
-    if (typeof window !== 'undefined') {
-      window.addEventListener('data-restored', handleDataRestored)
-      return () => window.removeEventListener('data-restored', handleDataRestored)
-    }
-  })
-  const { data: purchases } = useSWR('/api/purchases', fetcher, {
-    revalidateOnFocus: false,
-    dedupingInterval: 2000,
-    errorRetryCount: 3,
-  })
+    window.addEventListener('data-restored', handleDataRestored)
+    return () => window.removeEventListener('data-restored', handleDataRestored)
+  }, [mutate])
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({ name: '', unit: 'kg' })
   const [searchTerm, setSearchTerm] = useState('')

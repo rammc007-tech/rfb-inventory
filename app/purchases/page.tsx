@@ -143,8 +143,8 @@ interface EditingPurchase {
 }
 
 export default function PurchasesPage() {
-  const { data: materialsData } = useSWR('/api/raw-materials', fetcher)
-  const { data: purchases, mutate } = useSWR('/api/purchases', fetcher)
+  const { data: materialsData } = useSWR('/api/raw-materials', fastFetcher, fastSWRConfig)
+  const { data: purchases, mutate } = useSWR('/api/purchases', fastFetcher, fastSWRConfig)
   
   // Ensure materials is always an array
   const materials = Array.isArray(materialsData) ? materialsData : []

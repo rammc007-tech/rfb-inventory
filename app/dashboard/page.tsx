@@ -11,11 +11,11 @@ import ShopLogo from '@/components/ShopLogo'
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 function DashboardContent() {
-  const { data: materials } = useSWR('/api/raw-materials', fetcher)
-  const { data: recipes } = useSWR('/api/recipes', fetcher)
-  const { data: purchases } = useSWR('/api/purchases', fetcher)
-  const { data: productions } = useSWR('/api/production', fetcher)
-  const { data: shopSettings } = useSWR('/api/settings', fetcher)
+  const { data: materials } = useSWR('/api/raw-materials', fastFetcher, fastSWRConfig)
+  const { data: recipes } = useSWR('/api/recipes', fastFetcher, fastSWRConfig)
+  const { data: purchases } = useSWR('/api/purchases', fastFetcher, fastSWRConfig)
+  const { data: productions } = useSWR('/api/production', fastFetcher, fastSWRConfig)
+  const { data: shopSettings } = useSWR('/api/settings', fastFetcher, fastSWRConfig)
 
   // Ensure all data is arrays
   const materialsArray = Array.isArray(materials) ? materials : []

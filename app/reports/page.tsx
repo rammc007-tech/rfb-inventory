@@ -9,9 +9,9 @@ import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-f
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function ReportsPage() {
-  const { data: productions } = useSWR('/api/production', fetcher)
-  const { data: recipes } = useSWR('/api/recipes', fetcher)
-  const { data: settings, mutate: mutateSettings } = useSWR('/api/settings', fetcher)
+  const { data: productions } = useSWR('/api/production', fastFetcher, fastSWRConfig)
+  const { data: recipes } = useSWR('/api/recipes', fastFetcher, fastSWRConfig)
+  const { data: settings, mutate: mutateSettings } = useSWR('/api/settings', fastFetcher, fastSWRConfig)
   const [filterType, setFilterType] = useState<'all' | 'today' | 'week' | 'month' | 'custom'>('all')
   const [selectedDate, setSelectedDate] = useState('')
   const [endDate, setEndDate] = useState('')
