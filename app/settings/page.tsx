@@ -1229,16 +1229,6 @@ export default function SettingsPage() {
                       placeholder="e.g., /Users/ramelumalai/backups"
                       className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                     />
-                    <button
-                      onClick={() => {
-                        const location = prompt('Enter backup location path:')
-                        if (location) setBackupLocation(location)
-                      }}
-                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 flex items-center gap-2"
-                    >
-                      <FolderOpen size={18} />
-                      Browse
-                    </button>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
                     Leave empty to save to default location
