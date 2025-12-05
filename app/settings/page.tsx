@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback } from 'react'
 import DashboardLayout from '@/components/DashboardLayout'
 import { Settings, Users, Store, Download, Upload, Printer, Key, FolderOpen, Eye, EyeOff, Shield, Lock, X } from 'lucide-react'
 import useSWR from 'swr'
+import { fastFetcher, fastSWRConfig } from '@/lib/fast-fetcher'
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<'shop' | 'users' | 'backup' | 'print' | 'access'>('shop')
