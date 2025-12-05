@@ -148,6 +148,17 @@ export default function PurchasesPage() {
   
   // Ensure materials is always an array
   const materials = Array.isArray(materialsData) ? materialsData : []
+  
+  // Enrich purchases with material names
+  const enrichedPurchases = Array.isArray(purchases) 
+    ? purchases.map((p: any) => {
+        const material = materials.find((m: any) => m.id === p.rawMaterialId)
+        return {
+          ...p,
+          rawMaterialName: material?.name || p.rawMaterialName || 'Unknown Material',
+        }
+      })
+    : []
   const [showForm, setShowForm] = useState(false)
   const [purchaseItems, setPurchaseItems] = useState<PurchaseItem[]>([
     { materialId: '', quantity: '', unit: 'kg', unitPrice: '', totalCost: '', gasCylinderQty: '' },
@@ -292,17 +303,30 @@ export default function PurchasesPage() {
     if (!confirm('Are you sure you want to delete this purchase?')) return
 
     try {
+      // Optimistic update - remove immediately
+      const updatedPurchases = purchases?.filter((p: any) => p.id !== id)
+      await mutate(updatedPurchases, false)
+      
       const res = await fetch(`/api/purchases/${id}`, {
         method: 'DELETE',
       })
 
       if (res.ok) {
-        mutate()
-        alert('Purchase deleted successfully!')
+        // Notify deleted items page
+        window.dispatchEvent(new CustomEvent('purchase-deleted', { detail: { id } }))
+        
+        // Final revalidate
+        await mutate()
+        
+        console.log('✅ Purchase deleted and synced')
       } else {
+        // Revert on error
+        await mutate()
         alert('Failed to delete purchase')
       }
     } catch (error) {
+      // Revert on error
+      await mutate()
       alert('Failed to delete purchase')
     }
   }

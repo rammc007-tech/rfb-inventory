@@ -110,6 +110,10 @@ export default function RawMaterialsPage() {
     }
 
     try {
+      // Optimistic update - remove immediately
+      const updatedMaterials = materials?.filter((m: any) => m.id !== id)
+      await mutate(updatedMaterials, false)
+      
       const res = await fetch(`/api/raw-materials/${id}`, {
         method: 'DELETE',
         headers: {
@@ -117,13 +121,22 @@ export default function RawMaterialsPage() {
         },
       })
       if (res.ok) {
-        mutate()
-        alert('Material deleted successfully!')
+        // Notify deleted items page
+        window.dispatchEvent(new CustomEvent('raw-material-deleted', { detail: { id } }))
+        
+        // Final revalidate
+        await mutate()
+        
+        console.log('✅ Raw material deleted and synced')
       } else {
+        // Revert on error
+        await mutate()
         const error = await res.json()
         alert(error.error || 'Failed to delete material')
       }
     } catch (error) {
+      // Revert on error
+      await mutate()
       alert('Failed to delete material')
     }
   }
