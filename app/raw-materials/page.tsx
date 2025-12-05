@@ -20,7 +20,7 @@ export default function RawMaterialsPage() {
     window.addEventListener('data-restored', handleDataRestored)
     return () => window.removeEventListener('data-restored', handleDataRestored)
   }, [mutate])
-  const { data: accessControl } = useSWR('/api/settings/access-control', fetcher)
+  const { data: accessControl } = useSWR('/api/settings/access-control', fastFetcher, fastSWRConfig)
   const [userRole, setUserRole] = useState<'user' | 'supervisor' | 'admin' | null>(null)
   const [canDelete, setCanDelete] = useState(false)
   const [showForm, setShowForm] = useState(false)
