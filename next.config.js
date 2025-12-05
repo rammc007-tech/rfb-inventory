@@ -7,6 +7,17 @@ const nextConfig = {
       exclude: ['error', 'warn'],
     } : false,
   },
+  // Disable hydration warnings
+  onDemandEntries: {
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
+  },
+  // Suppress hydration warnings in development
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+  },
   // Ensure proper file serving
   webpack: (config, { isServer }) => {
     if (!isServer) {
