@@ -157,6 +157,7 @@ export default function PurchasesPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedDate, setSelectedDate] = useState('')
   const [editingPurchase, setEditingPurchase] = useState<EditingPurchase | null>(null)
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set())
 
   const addPurchaseItem = () => {
     setPurchaseItems([
@@ -869,6 +870,14 @@ export default function PurchasesPage() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
+                <th className="px-4 py-3 text-left no-print">
+                  <input
+                    type="checkbox"
+                    checked={filteredPurchases.length > 0 && selectedItems.size === filteredPurchases.length}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-300"
+                  />
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Date
                 </th>
