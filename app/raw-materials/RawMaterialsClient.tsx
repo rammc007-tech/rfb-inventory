@@ -7,7 +7,7 @@ import useSWR from 'swr'
 import { getUserRole } from '@/lib/access-control'
 import { fastFetcher, fastSWRConfig } from '@/lib/fast-fetcher'
 
-export default function RawMaterialsPage() {
+export default function RawMaterialsClient() {
   const { data: materials, error, isLoading, mutate } = useSWR('/api/raw-materials', fastFetcher, fastSWRConfig)
   
   // Listen for restore events from deleted items page
@@ -20,6 +20,7 @@ export default function RawMaterialsPage() {
     window.addEventListener('data-restored', handleDataRestored)
     return () => window.removeEventListener('data-restored', handleDataRestored)
   }, [mutate])
+  
   const { data: accessControl } = useSWR('/api/settings/access-control', fastFetcher, fastSWRConfig)
   const [userRole, setUserRole] = useState<'user' | 'supervisor' | 'admin' | null>(null)
   const [canDelete, setCanDelete] = useState(false)
@@ -53,16 +54,11 @@ export default function RawMaterialsPage() {
           body: JSON.stringify(formData),
         })
         if (res.ok) {
-          const updated = await res.json()
           mutate()
-          setFormData({ name: '', unit: 'kg' })
           setShowForm(false)
+          setFormData({ name: '', unit: 'kg' })
           setEditingMaterial(null)
           alert('Material updated successfully!')
-        } else {
-          const errorData = await res.json()
-          console.error('Update error:', errorData)
-          alert(errorData.error || 'Failed to update material')
         }
       } else {
         // Create new material
@@ -71,18 +67,11 @@ export default function RawMaterialsPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData),
         })
-        
-        if (res.ok || res.status === 201) {
-          const newMaterial = await res.json()
-          console.log('Material created:', newMaterial)
+        if (res.ok) {
           mutate()
-          setFormData({ name: '', unit: 'kg' })
           setShowForm(false)
-          alert('Material created successfully!')
-        } else {
-          const errorData = await res.json()
-          console.error('Create error:', errorData)
-          alert(errorData.error || `Failed to create material (Status: ${res.status})`)
+          setFormData({ name: '', unit: 'kg' })
+          alert('Material added successfully!')
         }
       }
     } catch (error) {
@@ -90,77 +79,66 @@ export default function RawMaterialsPage() {
     }
   }
 
-  const handleEditMaterial = (material: any) => {
+  const handleEdit = (material: any) => {
     setEditingMaterial(material)
-    setFormData({
-      name: material.name || '',
-      unit: material.unit || 'kg',
-    })
+    setFormData({ name: material.name, unit: material.unit })
     setShowForm(true)
   }
 
-  const handleDeleteMaterial = async (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!canDelete) {
-      alert('You do not have permission to delete materials.')
+      alert('You do not have permission to delete raw materials')
       return
     }
-
-    if (!confirm('Are you sure you want to delete this material? This action cannot be undone.')) {
-      return
-    }
+    
+    if (!confirm('Are you sure you want to delete this material?')) return
 
     try {
       const res = await fetch(`/api/raw-materials/${id}`, {
         method: 'DELETE',
-        headers: {
-          'x-user-role': userRole || 'user',
-        },
       })
       if (res.ok) {
         mutate()
         alert('Material deleted successfully!')
-      } else {
-        const error = await res.json()
-        alert(error.error || 'Failed to delete material')
       }
     } catch (error) {
       alert('Failed to delete material')
     }
   }
 
-  // Ensure materials is always an array
+  const toggleEssential = async (material: any) => {
+    try {
+      const res = await fetch(`/api/raw-materials/${material.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...material,
+          isEssential: !material.isEssential,
+        }),
+      })
+      
+      if (res.ok) {
+        // Dispatch event for essential items page
+        if (!material.isEssential) {
+          window.dispatchEvent(new CustomEvent('essential-added', { 
+            detail: { id: material.id } 
+          }))
+        } else {
+          window.dispatchEvent(new CustomEvent('essential-removed', { 
+            detail: { id: material.id } 
+          }))
+        }
+        
+        mutate()
+        alert(`Material ${!material.isEssential ? 'marked as' : 'removed from'} essential!`)
+      }
+    } catch (error) {
+      alert('Failed to update material')
+    }
+  }
+
   // Ensure materials is always an array
   const materialsList = Array.isArray(materials) ? materials : []
-  
-  // Select All handlers
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      const allIds = new Set(filteredMaterials.map((m: any) => m.id))
-      setSelectedItems(allIds)
-    } else {
-      setSelectedItems(new Set())
-    }
-  }
-  
-  const handleSelectItem = (id: string, checked: boolean) => {
-    const newSelected = new Set(selectedItems)
-    if (checked) {
-      newSelected.add(id)
-    } else {
-      newSelected.delete(id)
-    }
-    setSelectedItems(newSelected)
-  }
-  
-  // Add retry logic for failed requests
-  useEffect(() => {
-    if (error && !isLoading) {
-      const timer = setTimeout(() => {
-        mutate()
-      }, 3000)
-      return () => clearTimeout(timer)
-    }
-  }, [error, isLoading, mutate])
   
   const filteredMaterials = materialsList.filter((material: any) => {
     // Safety check: ensure material exists and has required properties
@@ -184,18 +162,22 @@ export default function RawMaterialsPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-gray-800">Raw Materials</h2>
-          <div className="flex gap-2">
+          <h1 className="text-3xl font-bold text-gray-800">Raw Materials</h1>
+          <div className="flex gap-2 no-print">
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 no-print"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
             >
-              <Printer size={18} />
+              <Printer size={20} />
               Print
             </button>
             <button
-              onClick={() => setShowForm(!showForm)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 no-print"
+              onClick={() => {
+                setEditingMaterial(null)
+                setFormData({ name: '', unit: 'kg' })
+                setShowForm(!showForm)
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
             >
               <Plus size={20} />
               Add Material
@@ -203,6 +185,65 @@ export default function RawMaterialsPage() {
           </div>
         </div>
 
+        {/* Add/Edit Form */}
+        {showForm && (
+          <div className="bg-white rounded-lg shadow p-6 no-print">
+            <h3 className="text-lg font-semibold mb-4">
+              {editingMaterial ? 'Edit Material' : 'Add New Material'}
+            </h3>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Material Name
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Unit
+                </label>
+                <select
+                  value={formData.unit}
+                  onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="kg">Kilogram (kg)</option>
+                  <option value="g">Gram (g)</option>
+                  <option value="liter">Liter</option>
+                  <option value="ml">Milliliter (ml)</option>
+                  <option value="pieces">Pieces</option>
+                </select>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                >
+                  {editingMaterial ? 'Update' : 'Add'} Material
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowForm(false)
+                    setEditingMaterial(null)
+                    setFormData({ name: '', unit: 'kg' })
+                  }}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Search and Filter */}
         <div className="bg-white rounded-lg shadow p-4">
           <div className="flex gap-4 items-center">
             <div className="flex-1 relative">
@@ -230,80 +271,21 @@ export default function RawMaterialsPage() {
           </div>
         </div>
 
-        {showForm && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold mb-4">
-              {editingMaterial ? 'Edit Raw Material' : 'Add New Raw Material'}
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Material Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                  placeholder="e.g., Maida, Oil, Sugar"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Unit
-                </label>
-                <select
-                  value={formData.unit}
-                  onChange={(e) =>
-                    setFormData({ ...formData, unit: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                >
-                  <option value="kg">Kilogram (kg)</option>
-                  <option value="g">Gram (g)</option>
-                  <option value="liter">Liter</option>
-                  <option value="ml">Milliliter (ml)</option>
-                  <option value="pieces">Pieces</option>
-                </select>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-                >
-                  Create
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowForm(false)
-                    setFormData({ name: '', unit: 'kg' })
-                    setEditingMaterial(null)
-                  }}
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
+        {/* Loading state */}
         {isLoading && (
           <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
             Loading materials...
           </div>
         )}
 
+        {/* Error state */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800">
-            Error loading materials: {error.message || 'Unknown error'}
+          <div className="bg-white rounded-lg shadow p-8 text-center text-red-500">
+            Failed to load materials. Please refresh the page.
           </div>
         )}
 
+        {/* Materials list */}
         {!isLoading && !error && (
           <div className="bg-white rounded-lg shadow overflow-hidden print:shadow-none">
             <div className="hidden print:block text-center py-3 print:py-2 print:mb-2 border-b print:border-gray-300">
@@ -313,19 +295,11 @@ export default function RawMaterialsPage() {
               </p>
             </div>
             <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 text-left no-print">
-                  <input
-                    type="checkbox"
-                    checked={filteredMaterials.length > 0 && selectedItems.size === filteredMaterials.length}
-                    onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300"
-                  />
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Name
+                  </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Unit
                   </th>
@@ -344,25 +318,17 @@ export default function RawMaterialsPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-              {filteredMaterials.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                    {materialsList.length === 0 ? 'No raw materials found. Add your first material!' : 'No materials match your filters.'}
-                  </td>
-                </tr>
-              ) : (
-              filteredMaterials.map((material: any) => (
-                material && material.name ? (
-                  <tr key={material.id || Math.random()} className={selectedItems.has(material.id) ? 'bg-blue-50' : ''}>
-                    <td className="px-4 py-4 whitespace-nowrap no-print">
-                      <input
-                        type="checkbox"
-                        checked={selectedItems.has(material.id)}
-                        onChange={(e) => handleSelectItem(material.id, e.target.checked)}
-                        className="w-4 h-4 rounded border-gray-300"
-                      />
+                {filteredMaterials.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                      {materialsList.length === 0 ? 'No raw materials found. Add your first material!' : 'No materials match your filters.'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  </tr>
+                ) : (
+                filteredMaterials.map((material: any) => (
+                  material && material.name ? (
+                    <tr key={material.id || Math.random()}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {material.name || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -372,61 +338,54 @@ export default function RawMaterialsPage() {
                         {(material.currentStock ?? 0).toFixed(2)} {material.stockUnit || material.unit || ''}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {(material.currentStock ?? 0) < 10 ? (
-                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">
-                            Low Stock
-                          </span>
-                        ) : (
-                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                            In Stock
-                          </span>
-                        )}
+                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          (material.currentStock ?? 0) < 10
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-green-100 text-green-800'
+                        }`}>
+                          {(material.currentStock ?? 0) < 10 ? 'Low Stock' : 'In Stock'}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm no-print">
                         <button
-                          onClick={async () => {
-                            try {
-                              const res = await fetch(`/api/raw-materials/${material.id}`, {
-                                method: 'PUT',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ isEssential: !material.isEssential }),
-                              })
-                              if (res.ok) {
-                                mutate()
-                              }
-                            } catch (error) {
-                              alert('Failed to update')
-                            }
-                          }}
-                          className={`p-2 rounded-lg ${
+                          onClick={() => toggleEssential(material)}
+                          className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
                             material.isEssential
-                              ? 'bg-yellow-100 text-yellow-600'
-                              : 'bg-gray-100 text-gray-400'
-                          } hover:bg-yellow-200`}
-                          title={material.isEssential ? 'Remove from essential' : 'Mark as essential'}
+                              ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          }`}
                         >
-                          <Star
-                            size={20}
-                            className={material.isEssential ? 'fill-yellow-500' : ''}
-                          />
+                          {material.isEssential ? (
+                            <>
+                              <Star size={12} className="fill-current" />
+                              Remove from essential
+                            </>
+                          ) : (
+                            <>
+                              <Star size={12} />
+                              Mark as essential
+                            </>
+                          )}
                         </button>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium no-print">
                         <div className="flex gap-2">
                           <button
-                            onClick={() => handleEditMaterial(material)}
-                            className="text-blue-600 hover:text-blue-800"
+                            onClick={() => handleEdit(material)}
+                            className="text-primary-600 hover:text-primary-900"
                             title="Edit Material"
                           >
-                            <Edit size={16} />
+                            <Edit size={18} />
                           </button>
-                          <button
-                            onClick={() => handleDeleteMaterial(material.id)}
-                            className="text-red-600 hover:text-red-800"
-                            title="Delete Material"
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                          {canDelete && (
+                            <button
+                              onClick={() => handleDelete(material.id)}
+                              className="text-red-600 hover:text-red-900"
+                              title="Delete Material"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
