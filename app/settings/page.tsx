@@ -481,7 +481,7 @@ export default function SettingsPage() {
       })
       if (res.ok) {
         const data = await res.json()
-        alert(`Backup created successfully!\nFile: ${data.filename}\n${backupLocation ? `Location: ${backupLocation}` : 'Saved to default location'}`)
+        alert(`✅ Backup created successfully!\n\n📁 Full Path:\n${data.filepath}\n\n📝 Filename: ${data.filename}`)
       } else {
         const error = await res.json()
         alert(error.error || 'Failed to create backup')
