@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #D64545;
+  --secondary: #F7E7D9;
+  --accent: #6B4F4F;
+}
+
+body {
+  @apply bg-secondary text-gray-900;
+}
+
+/* Print styles for logo */
+@media print {
+  .logo-print {
+    width: 20mm;
+    height: 20mm;
+  }
+}
+

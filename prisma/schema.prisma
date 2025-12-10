@@ -1,0 +1,238 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String?  @unique
+  name          String
+  password      String
+  role          String   @default("CASHIER")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  accessControl AccessControl?
+}
+
+model AccessControl {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  canViewDashboard Boolean @default(true)
+  canManageItems   Boolean @default(false)
+  canManagePurchase Boolean @default(false)
+  canManageRecipe   Boolean @default(false)
+  canManageProduction Boolean @default(false)
+  canViewReports     Boolean @default(false)
+  canManageUsers     Boolean @default(false)
+  canManageSettings  Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Unit {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  symbol      String   @unique
+  type        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  itemUnits   ItemUnit[]
+  conversionsFrom ConversionFactor[] @relation("FromUnit")
+  conversionsTo   ConversionFactor[] @relation("ToUnit")
+  baseItems   Item[]
+  stocks      Stock[]
+  purchaseItems PurchaseItem[]
+  yieldRecipes Recipe[]
+  recipeIngredients RecipeIngredient[]
+  productions Production[]
+  productionItems ProductionItem[]
+}
+
+model Item {
+  id                String    @id @default(cuid())
+  name              String
+  sku               String?   @unique
+  type              String
+  category          String?
+  baseUnitId        String
+  baseUnit          Unit      @relation(fields: [baseUnitId], references: [id])
+  baseQuantity      Float     @default(1.0)
+  reorderThreshold  Float     @default(0)
+  lastPurchasePrice Float?
+  avgPrice          Float     @default(0)
+  location          String?
+  deletedAt         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  itemUnits         ItemUnit[]
+  purchaseItems     PurchaseItem[]
+  recipeIngredients RecipeIngredient[]
+  productionItems   ProductionItem[]
+  stock             Stock?
+}
+
+model ItemUnit {
+  id        String   @id @default(cuid())
+  itemId    String
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  unitId    String
+  unit      Unit     @relation(fields: [unitId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([itemId, unitId])
+}
+
+model ConversionFactor {
+  id          String   @id @default(cuid())
+  fromUnitId  String
+  fromUnit    Unit     @relation("FromUnit", fields: [fromUnitId], references: [id])
+  toUnitId    String
+  toUnit      Unit     @relation("ToUnit", fields: [toUnitId], references: [id])
+  factor      Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([fromUnitId, toUnitId])
+}
+
+model Stock {
+  id          String   @id @default(cuid())
+  itemId      String   @unique
+  item        Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  quantity    Float    @default(0)
+  unitId      String
+  unit        Unit     @relation(fields: [unitId], references: [id])
+  updatedAt   DateTime @updatedAt
+}
+
+model Supplier {
+  id          String    @id @default(cuid())
+  name        String
+  contact     String?
+  email       String?
+  address     String?
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  purchases   Purchase[]
+}
+
+model Purchase {
+  id          String        @id @default(cuid())
+  date        DateTime      @default(now())
+  supplierId  String
+  supplier    Supplier      @relation(fields: [supplierId], references: [id])
+  totalAmount Float         @default(0)
+  notes       String?
+  deletedAt   DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  items       PurchaseItem[]
+}
+
+model PurchaseItem {
+  id          String   @id @default(cuid())
+  purchaseId  String
+  purchase    Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  itemId      String
+  item        Item     @relation(fields: [itemId], references: [id])
+  quantity    Float
+  unitId      String
+  unit        Unit     @relation(fields: [unitId], references: [id])
+  unitPrice   Float
+  lineTotal   Float
+  createdAt   DateTime @default(now())
+}
+
+model Recipe {
+  id          String            @id @default(cuid())
+  name        String
+  description String?
+  yieldQuantity Float
+  yieldUnitId   String
+  yieldUnit     Unit            @relation(fields: [yieldUnitId], references: [id])
+  deletedAt     DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  ingredients   RecipeIngredient[]
+  productions   Production[]
+}
+
+model RecipeIngredient {
+  id          String   @id @default(cuid())
+  recipeId    String
+  recipe      Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  itemId      String
+  item        Item     @relation(fields: [itemId], references: [id])
+  quantity    Float
+  unitId      String
+  unit        Unit     @relation(fields: [unitId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Production {
+  id              String            @id @default(cuid())
+  date            DateTime          @default(now())
+  recipeId        String
+  recipe          Recipe            @relation(fields: [recipeId], references: [id])
+  producedQuantity Float
+  producedUnitId  String
+  producedUnit    Unit              @relation(fields: [producedUnitId], references: [id])
+  laborCost       Float             @default(0)
+  overheadCost    Float             @default(0)
+  totalCost       Float             @default(0)
+  costPerUnit     Float             @default(0)
+  notes           String?
+  deletedAt       DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  items           ProductionItem[]
+}
+
+model ProductionItem {
+  id              String     @id @default(cuid())
+  productionId    String
+  production      Production @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  itemId          String
+  item            Item       @relation(fields: [itemId], references: [id])
+  quantity        Float
+  unitId          String
+  unit            Unit       @relation(fields: [unitId], references: [id])
+  unitCost        Float
+  lineTotal       Float
+  createdAt       DateTime   @default(now())
+}
+
+model ShopSettings {
+  id          String   @id @default(cuid())
+  name        String   @default("RISHA FOODS AND BAKERY")
+  shortForm   String   @default("RFB")
+  address     String   @default("Server No: 103/1A2, Agaramel, Poonamallee Taluk, Chennai - 600123")
+  email       String   @default("rishafoodsandbakery@gmail.com")
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SyncQueue {
+  id          String   @id @default(cuid())
+  action      String
+  entityType  String
+  entityId    String
+  data        String
+  status      String   @default("pending")
+  error       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+

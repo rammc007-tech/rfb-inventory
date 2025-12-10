@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create PWA Icons</title>
+</head>
+<body>
+    <h1>PWA Icon Generator</h1>
+    <p>Open this file in a browser and the icons will be downloaded automatically.</p>
+    <canvas id="canvas192" width="192" height="192" style="display:none;"></canvas>
+    <canvas id="canvas512" width="512" height="512" style="display:none;"></canvas>
+    <script>
+        function createIcon(size, filename) {
+            const canvas = document.getElementById(`canvas${size}`);
+            const ctx = canvas.getContext('2d');
+            
+            // Fill background
+            ctx.fillStyle = '#D64545';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Draw text
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = `bold ${size * 0.4}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('RFB', size / 2, size / 2);
+            
+            // Download
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+        
+        // Create icons when page loads
+        window.onload = () => {
+            createIcon(192, 'icon-192.png');
+            setTimeout(() => createIcon(512, 'icon-512.png'), 500);
+            setTimeout(() => {
+                document.body.innerHTML += '<p style="color:green;">Icons created! Check your Downloads folder and move them to the public/ folder.</p>';
+            }, 1000);
+        };
+    </script>
+</body>
+</html>
+
